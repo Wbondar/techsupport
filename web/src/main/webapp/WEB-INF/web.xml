@@ -1,0 +1,59 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>techsupport-webapp</display-name>
+  <servlet>
+  	<servlet-name>CommentCreate</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.CommentCreate</servlet-class>
+  </servlet>
+  <!--
+  <servlet>
+  	<servlet-name>CommentDestroy</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.CommentDestroy</servlet-class>
+  </servlet>
+  -->
+  <servlet>
+  	<servlet-name>IssueCreate</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueCreate</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>IssueRead</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueRead</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>IssueUpdateAssignTag</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueUpdateAssignTag</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>IssueUpdateUnassignTag</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueUpdateUnassignTag</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>MemberCreate</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.MemberCreate</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>SessionCreate</servlet-name>
+    <servlet-class>pl.chelm.pwsz.techsupport.web.SessionCreate</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>SessionDestroy</servlet-name>
+    <servlet-class>pl.chelm.pwsz.techsupport.web.SessionDestroy</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>TagCreate</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.TagCreate</servlet-class>
+  </servlet>
+  <!--
+  <servlet>
+  	<servlet-name>TagUpdate</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.TagUpdate</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>TagDestroy</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.TagDestroy</servlet-class>
+  </servlet>
+  -->
+</web-app>
