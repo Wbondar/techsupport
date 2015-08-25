@@ -29,6 +29,7 @@ implements Datasource
 			statement.setString(3, content);
 			statement.registerOutParameter(4, Types.INTEGER);
 			statement.registerOutParameter(5, Types.DATE);
+			statement.execute( );
 			Integer id = statement.getInt(4);
 			Date when = statement.getDate(5);
 			Map<String, Object> mapping = new HashMap<String, Object> ( );
@@ -40,16 +41,17 @@ implements Datasource
 		}
 	}
 
-	public Data createResponse (int idOfCOmmentToRespondeTo, int idOfAuthor, String content)
+	public Data createResponse (int idOfCommentToRespondeTo, int idOfAuthor, String content)
 	{
 		try
 		{
 			CallableStatement statement = this.prepareCall ("{CALL response_create (?, ?, ?, ?, ?)}");
-			statement.setInt(1, idOfCOmmentToRespondeTo);
+			statement.setInt(1, idOfCommentToRespondeTo);
 			statement.setInt(2, idOfAuthor);
 			statement.setString(3, content);
 			statement.registerOutParameter(4, Types.INTEGER);
 			statement.registerOutParameter(5, Types.DATE);
+			statement.execute( );
 			Integer id = statement.getInt(4);
 			Date when = statement.getDate(5);
 			Map<String, Object> mapping = new HashMap<String, Object> ( );

@@ -17,13 +17,22 @@ extends Object
 	throws SQLException
 	{
 		ResultSetMetaData metaData = resultSet.getMetaData( );
+		int columnsLeft = metaData.getColumnCount( );
+		if (columnsLeft < 1)
+		{
+			return null;
+		}
 		resultSet.beforeFirst( );
+		if (!resultSet.isBeforeFirst( ))
+		{
+			return null;
+		}
 		resultSet.next( );
 		Map<String, Object> mapping = new HashMap<String, Object> ( );
-		int i = 0;
-		for (i = 0; i < metaData.getColumnCount( ); i++)
+		while (columnsLeft > 0)
 		{
-			mapping.put(metaData.getColumnLabel(i), resultSet.getObject(i));
+			mapping.put(metaData.getColumnLabel(columnsLeft), resultSet.getObject(columnsLeft));
+			columnsLeft--;
 		}
 		return new Data (mapping);
 	}
@@ -32,15 +41,24 @@ extends Object
 	throws SQLException
 	{
 		ResultSetMetaData metaData = resultSet.getMetaData( );
-		List<Data> collectionOfData = new ArrayList<Data> ( );
+		int columnsLeft = metaData.getColumnCount( );
+		if (columnsLeft < 1)
+		{
+			return null;
+		}
 		resultSet.beforeFirst( );
+		if (!resultSet.isBeforeFirst( ))
+		{
+			return null;
+		}
+		List<Data> collectionOfData = new ArrayList<Data> ( );
 		while (resultSet.next( ))
 		{
 			Map<String, Object> mapping = new HashMap<String, Object> ( );
-			int i = 0;
-			for (i = 0; i < metaData.getColumnCount( ); i++)
+			while (columnsLeft > 0)
 			{
-				mapping.put(metaData.getColumnLabel(i), resultSet.getObject(i));
+				mapping.put(metaData.getColumnLabel(columnsLeft), resultSet.getObject(columnsLeft));
+				columnsLeft--;
 			}
 			Data data = new Data (mapping);
 			collectionOfData.add(data);

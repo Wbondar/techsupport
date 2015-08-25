@@ -24,6 +24,7 @@ implements Datasource
 			CallableStatement statement = this.prepareCall ("{CALL tag_create (?, ?)}");
 			statement.setString(1, title);
 			statement.registerOutParameter(2, Types.INTEGER);
+			statement.execute( );
 			return statement.getInt(2);
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to create a new tag.", e);

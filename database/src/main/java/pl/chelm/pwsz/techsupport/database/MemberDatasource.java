@@ -2,11 +2,14 @@ package pl.chelm.pwsz.techsupport.database;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Types;
 
 import java.util.Map;
+
+import pl.chelm.pwsz.techsupport.services.PasswordHandler;
 
 public final class MemberDatasource
 extends NativeDatasource
@@ -23,10 +26,11 @@ implements Datasource
 		{
 			CallableStatement statement = this.prepareCall ("{CALL member_create (?, ?, ?)}");
 			statement.setString(1, name);
-			statement.setString(2, password);
+			statement.setString(2, PasswordHandler.hash(password));
 			statement.registerOutParameter(3, Types.INTEGER);
+			statement.execute( );
 			return statement.getInt(3);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new DatasourceException ("Failed to create a new member.", e);
 		}
 	}
@@ -47,12 +51,22 @@ implements Datasource
 	{
 		try
 		{
-			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_member WHERE LOWER(CONCAT(name, password)) = LOWER(CONCAT(?, ?)) LIMIT 1;");
+			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_member WHERE name = LOWER(?) LIMIT 1;");
 			statement.setString(1, name);
-			statement.setString(2, password);
-			return DataFactory.getFirstRow(statement.executeQuery( ));
-		} catch (SQLException e) {
-			throw new DatasourceException ("Failed to fetch a member from the database by their name.", e);
+			Data data = DataFactory.getFirstRow(statement.executeQuery( ));
+			if (data == null)
+			{
+				return null;
+			}
+			String storedPasswordHash = data.<String>get(String.class, "password_hash");
+			if (PasswordHandler.validate(password, storedPasswordHash))
+			{	
+				return data;
+			} else {
+				throw new RuntimeException ("Provided password is invalid.");
+			}
+		} catch (Exception e) {
+			throw new DatasourceException ("Failed to fetch a member from the database by their name and password.", e);
 		}
 	}
 }

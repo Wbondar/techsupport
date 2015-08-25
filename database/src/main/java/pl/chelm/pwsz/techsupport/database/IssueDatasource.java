@@ -26,6 +26,7 @@ implements Datasource
 			statement.setString(2, title);
 			statement.setString(3, description);
 			statement.registerOutParameter(4, Types.INTEGER);
+			statement.execute( );
 			return statement.getInt(4);
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to create a new issue.", e);
@@ -59,8 +60,8 @@ implements Datasource
 		try
 		{
 			CallableStatement statement = this.prepareCall ("{CALL issue_update_assign_tag (?, ?, ?)}");
-			statement.setInt(1, idOfIssue);
-			statement.setInt(2, idOfMember);
+			statement.setInt(1, idOfMember);
+			statement.setInt(2, idOfIssue);
 			statement.setInt(3, idOfTag);
 			statement.executeQuery( );
 		} catch (SQLException e) {
@@ -73,8 +74,8 @@ implements Datasource
 		try
 		{
 			CallableStatement statement = this.prepareCall ("{CALL issue_update_unassign_tag (?, ?, ?)}");
-			statement.setInt(1, idOfIssue);
-			statement.setInt(2, idOfMember);
+			statement.setInt(1, idOfMember);
+			statement.setInt(2, idOfIssue);
 			statement.setInt(3, idOfTag);
 			statement.executeQuery( );
 		} catch (SQLException e) {

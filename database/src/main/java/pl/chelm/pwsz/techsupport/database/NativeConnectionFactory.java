@@ -20,6 +20,12 @@ implements ConnectionFactory
 		this.dbURL    = dbURL;
 		this.username = username;
 		this.password = password;
+        try
+        {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError ("Failed to locate database driver: " + e.getMessage( ), e);
+        }
 	}
 
 	private Connection connection = null;
