@@ -35,7 +35,7 @@ CREATE TABLE message
 CREATE TABLE issue 
 (
       id             INTEGER UNSIGNED  NOT NULL AUTO_INCREMENT
-    , author_id      SMALLINT UNSIGNED NOT NULL
+    , issuer_id      SMALLINT UNSIGNED NOT NULL
     , title          VARCHAR(100)      NOT NULL
     , description_id INTEGER UNSIGNED  NOT NULL
     , created_at     TIMESTAMP         NOT NULL
@@ -45,7 +45,7 @@ CREATE TABLE issue
      * that the author of a first comment on an issue (desription of an issue) is
      * the same as an author of an issue itself. 
      */ 
-    , FOREIGN KEY (author_id, description_id) REFERENCES message (author_id, id)
+    , FOREIGN KEY (issuer_id, description_id) REFERENCES message (author_id, id)
         ON DELETE RESTRICT
         ON UPDATE RESTRICT
     , UNIQUE KEY (title)
@@ -128,17 +128,17 @@ CREATE TABLE tag_unassignation
 DELIMITER ENDROUTINE
 CREATE PROCEDURE issue_create
 (
-      IN  arg_author_id   SMALLINT UNSIGNED 
+      IN  arg_issuer_id   SMALLINT UNSIGNED 
     , IN  arg_title       VARCHAR (100)
     , IN  arg_description TEXT
     , OUT arg_issue_id    INTEGER UNSIGNED 
 )
 BEGIN
     INSERT INTO message (author_id, content, posted_at) 
-    VALUES (arg_author_id, arg_description, NOW( ))
+    VALUES (arg_issuer_id, arg_description, NOW( ))
     ; 
-    INSERT INTO issue (title, author_id, description_id) 
-    VALUES (arg_title, arg_author_id, LAST_INSERT_ID( ))
+    INSERT INTO issue (title, issuer_id, description_id) 
+    VALUES (arg_title, arg_issuer_id, LAST_INSERT_ID( ))
     ;
     SELECT LAST_INSERT_ID( ) INTO arg_issue_id 
     ;

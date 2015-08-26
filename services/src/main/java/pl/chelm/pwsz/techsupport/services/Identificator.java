@@ -70,4 +70,10 @@ extends Number
 	{
 		return this.value;
 	}
+
+	@Override
+	public String toString ( )
+	{
+		return Integer.toString(this.value);
+	}
 }

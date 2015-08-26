@@ -123,6 +123,13 @@ implements Identifiable<Issue>
 		return Comment.newInstance(this, commentator, message);
 	}
 
+	/* TODO: Implement proper retrieving of comments. */
+
+	public Set<Comment> getComments ( )
+	{
+		return null;
+	}
+
 	private final Identificator<Issue> id;
 
 	public Identificator<Issue> getId ( )

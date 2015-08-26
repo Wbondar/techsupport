@@ -15,17 +15,17 @@ extends HttpServlet
 	public void doPost (HttpServletRequest request, HttpServletResponse response)
 	throws IOException, ServletException
 	{
-		String content = request.getParameter("content");
+		String message = request.getParameter("message");
 		Member author = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
 		Identificator<Comment> idOfParent = new Identificator<Comment> (request.getParameter("parent_id"));
 		Comment parent = Comment.getInstance(idOfParent);
 		if (parent != null)
 		{
-			Comment comment = Comment.newInstance(parent, author, content);
+			Comment comment = Comment.newInstance(parent, author, message);
 		} else {
 			Identificator<Issue> idOfIssue = new Identificator<Issue> (request.getParameter("issue_id"));
 			Issue issue = Issue.getInstance(idOfIssue);
-			Comment comment = Comment.newInstance(issue, author, content);
+			Comment comment = Comment.newInstance(issue, author, message);
 		}
 	}
 }

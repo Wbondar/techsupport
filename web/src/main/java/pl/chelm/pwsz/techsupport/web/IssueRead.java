@@ -17,5 +17,7 @@ extends HttpServlet
 	{
 		Identificator<Issue> id = new Identificator<Issue> (request.getParameter("id"));
 		Issue issue = Issue.getInstance(id);
+		request.setAttribute(Issue.class.toString( ), issue);
+		request.getRequestDispatcher("/views/issue_read.jsp").include(request, response);
 	}
 }
