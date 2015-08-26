@@ -74,4 +74,9 @@ implements Datasource
 			throw new DatasourceException ("Failed to fetch a comment from the database by it's key.", e);
 		}
 	}
+
+	public java.util.Collection<Data> readIssue (int idOfIssue)
+	{
+		return null;
+	}
 }

@@ -1,6 +1,10 @@
 package pl.chelm.pwsz.techsupport.domain;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
+import java.util.HashSet;
 
 import pl.chelm.pwsz.techsupport.database.*;
 import pl.chelm.pwsz.techsupport.services.*;
@@ -94,6 +98,28 @@ implements Identifiable<Comment>
 		Comment comment = new Comment (id, when, parent, author, content);
 		Comment.cache(comment);
 		return comment;
+	}
+
+	public static Comment getInstance (Data data)
+	{
+		return null;
+	}
+
+	public static Set<Comment> getInstance (Issue issue)
+	{
+		CommentDatasource datasource = DatasourceFactory.<CommentDatasource>getInstance(CommentDatasource.class);
+		Collection<Data> collectionOfData = datasource.readIssue(issue.getId( ).intValue( ));
+		if (collectionOfData == null)
+		{
+			return null;
+		}
+		Set<Comment> setOfComments = new HashSet<Comment> ( );
+		for (Data data : collectionOfData)
+		{
+			Comment comment = Comment.getInstance(data);
+			setOfComments.add(comment);
+		}
+		return Collections.<Comment>unmodifiableSet(setOfComments);
 	}
 
 	private Comment 

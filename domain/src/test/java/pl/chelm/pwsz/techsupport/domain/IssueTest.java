@@ -79,4 +79,11 @@ public class IssueTest
         issue.unassignTag(this.issuer, tag);
         assertFalse(issue.containsTag(tag));
     }
+
+    public void testCommentingOnIssue ( )
+    {
+        Issue issue = Issue.newInstance(this.issuer, "Comment on me.", "Comment on me.");
+        Comment comment = issue.comment(this.issuer, "I commented on you.");
+        assertTrue(issue.getComments( ).contains(comment));
+    }
 }

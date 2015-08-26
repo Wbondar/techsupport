@@ -216,12 +216,15 @@ CREATE PROCEDURE response_create
     , IN  arg_author_id   SMALLINT UNSIGNED 
     , IN  arg_description TEXT
     , OUT arg_message_id  INTEGER UNSIGNED 
+    , OUT arg_when        DATETIME
 )
 BEGIN
     INSERT INTO message (parent_id, author_id, content, posted_at)
     VALUES (arg_parent_id, arg_author_id, arg_description, NOW( ))
     ;
     SELECT LAST_INSERT_ID( ) INTO arg_message_id 
+    ;
+    SELECT NOW( ) INTO arg_when
     ;
 END 
 ENDROUTINE
@@ -234,13 +237,14 @@ CREATE PROCEDURE comment_create
     , IN  arg_author_id   SMALLINT UNSIGNED 
     , IN  arg_description TEXT
     , OUT arg_message_id  INTEGER UNSIGNED 
+    , OUT arg_when        DATETIME
 )
 BEGIN
     SELECT issue.description_id INTO @var_parent_id
     FROM issue 
     WHERE issue.id = arg_issue_id
     ;
-    CALL response_create (@var_parent_id, arg_author_id, arg_description)
+    CALL response_create (@var_parent_id, arg_author_id, arg_description, arg_message_id, arg_when)
     ;
 END 
 ENDROUTINE

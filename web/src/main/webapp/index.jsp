@@ -30,14 +30,7 @@
 			<h2>New issue.</h2>
 			<form action='/issue/create' method='POST' >
 			    <input type='text' name='title' />
-			    <textarea name='message'></textarea>
-			    <input type='submit' />
-			</form>
-		</section>
-		<section>
-			<h2>New tag.</h2>
-			<form action='/tag/create' method='POST' >
-			    <input type='text' name='title' />
+			    <textarea name='message' cols='30' rows='6'></textarea>
 			    <input type='submit' />
 			</form>
 		</section>
