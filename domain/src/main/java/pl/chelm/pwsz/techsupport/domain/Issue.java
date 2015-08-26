@@ -2,6 +2,7 @@ package pl.chelm.pwsz.techsupport.domain;
 
 /* TODO: Implement immutable class for handling tags assignation. */
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.HashSet;
@@ -95,18 +96,31 @@ implements Identifiable<Issue>
 		return this.issuer;
 	}
 
-	private final Set<Tag> tags = Collections.<Tag>synchronizedSet(new HashSet<Tag> ( ));
-
 	public Issue assignTag (Member whoIsAssigning, Tag tagToAssign)
 	{
-		this.tags.add(tagToAssign);
+		TagAssignation.newInstance(whoIsAssigning, this, tagToAssign);
 		return this;
 	}
 
 	public Issue unassignTag (Member whoIsUnassigning, Tag tagToUnassign)
 	{
-		this.tags.remove(tagToUnassign);
+		TagAssignation.destroyInstance(whoIsUnassigning, this, tagToUnassign);
 		return this;
+	}
+
+	public Set<Tag> getTags ( )
+	{
+		return TagAssignation.getTagsAssignedTo(this);
+	}
+
+	public boolean containsTag (Tag tagToCheck)
+	{
+		return this.getTags( ).contains(tagToCheck);
+	}
+
+	public Comment comment (Member commentator, String message)
+	{
+		return Comment.newInstance(this, commentator, message);
 	}
 
 	private final Identificator<Issue> id;

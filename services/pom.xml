@@ -19,5 +19,10 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>de.rtner</groupId>
+      <artifactId>PBKDF2</artifactId>
+      <version>1.1.1</version>
+    </dependency>
   </dependencies>
 </project>

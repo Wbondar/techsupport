@@ -78,6 +78,17 @@ implements Identifiable<Tag>
 			{
 				return null;
 			}
+			return Tag.getInstance(data);
+		}
+		return tag;
+	}
+
+	public static Tag getInstance (Data data)
+	{
+		Identificator<Tag> id = new Identificator<Tag> (data.<Integer>get(Integer.class, "id"));
+		Tag tag = Tag.readFromCache(id);
+		if (tag == null)
+		{
 			String title = data.<String>get(String.class, "title");
 			tag = new Tag (id, title);
 			Tag.cache(tag);

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Types;
 
+import java.util.Collection;
 import java.util.Map;
 
 public final class TagDatasource
@@ -52,6 +53,18 @@ implements Datasource
 			return DataFactory.getFirstRow(statement.executeQuery( ));
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to fetch a tag from the database by it's title.", e);
+		}
+	}
+
+	public Collection<Data> readAssignedTo (int idOfIssue)
+	{
+		try
+		{
+			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_tag_usage WHERE issue_id = ?;");
+			statement.setInt(1, idOfIssue);
+			return DataFactory.getAllRows(statement.executeQuery( ));
+		} catch (SQLException e) {
+			throw new DatasourceException ("Failed to fetch tags assigned to issue from the database.", e);
 		}
 	}
 }

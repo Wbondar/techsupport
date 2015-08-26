@@ -59,11 +59,11 @@ implements Datasource
 				return null;
 			}
 			String storedPasswordHash = data.<String>get(String.class, "password_hash");
-			if (PasswordHandler.validate(password, storedPasswordHash))
+			if (PasswordHandler.validate(password, storedPasswordHash) == true)
 			{	
 				return data;
 			} else {
-				throw new RuntimeException ("Provided password is invalid.");
+				return null;
 			}
 		} catch (Exception e) {
 			throw new DatasourceException ("Failed to fetch a member from the database by their name and password.", e);

@@ -31,12 +31,12 @@ implements Identifiable<Comment>
 			{
 				return null;
 			}
-			Comment commentToRespondeTo = null;
+			Comment parent = null;
 			Issue issueToCommentOn = null;
 			Identificator<Comment> idOfCommentToRespondeTo = new Identificator<Comment> (data.<Integer>get(Integer.class, "parent_id"));
 			if (idOfCommentToRespondeTo != null)
 			{
-				commentToRespondeTo = Comment.getInstance(idOfCommentToRespondeTo);
+				parent = Comment.getInstance(idOfCommentToRespondeTo);
 			} else {
 				Identificator<Issue> idOfIssueToCommentOn = new Identificator<Issue> (data.<Integer>get(Integer.class, "issue_id"));
 				issueToCommentOn = Issue.getInstance(idOfIssueToCommentOn);
@@ -45,11 +45,11 @@ implements Identifiable<Comment>
 			Identificator<Member> idOfAuthor = new Identificator<Member> (data.<Integer>get(Integer.class, "author_id"));
 			Member author = Member.getInstance(idOfAuthor);
 			String content = data.<String>get(String.class, "content");
-			if (commentToRespondeTo == null)
+			if (parent == null)
 			{
 				comment = new Comment (id, when, issueToCommentOn, author, content);
 			} else {
-				comment = new Comment (id, when, commentToRespondeTo, author, content);
+				comment = new Comment (id, when, parent, author, content);
 			}		
 			Comment.cache(comment);
 		}
@@ -85,13 +85,13 @@ implements Identifiable<Comment>
 		return datasource.createResponse(idOfParent.intValue( ), idOfAuthor.intValue( ), content);
 	}
 
-	public static Comment newInstance (Comment commentToRespondeTo, Member author, String content)
+	public static Comment newInstance (Comment parent, Member author, String content)
 	{
-		Data data = Comment.writeResponseToDatabase(commentToRespondeTo.getId( ), author.getId( ), content);
+		Data data = Comment.writeResponseToDatabase(parent.getId( ), author.getId( ), content);
 		Date when = data.<Date>get(Date.class, "when");
 		int idValue = data.<Integer>get(Integer.class, "id");
 		Identificator<Comment> id = new Identificator<Comment> (idValue);
-		Comment comment = new Comment (id, when, commentToRespondeTo, author, content);
+		Comment comment = new Comment (id, when, parent, author, content);
 		Comment.cache(comment);
 		return comment;
 	}
@@ -100,17 +100,17 @@ implements Identifiable<Comment>
 	(
 		  Identificator<Comment> id
 		, Date                   when
-		, Comment                commentToRespondeTo
+		, Comment                parent
 		, Member                 author
 		, String                 content
 	)
 	{
 		this.id                  = id;
-		this.commentedIssue      = commentToRespondeTo.getIssue( );
+		this.commentedIssue      = parent.getIssue( );
 		this.when                = when;
 		this.author              = author;
 		this.content             = content;
-		this.commentToRespondeTo = commentToRespondeTo;
+		this.parent = parent;
 	}
 
 	private Comment 
@@ -127,7 +127,7 @@ implements Identifiable<Comment>
 		this.when                = when;
 		this.author              = author;
 		this.content             = content;
-		this.commentToRespondeTo = null;
+		this.parent = null;
 	}
 
 	private final Identificator<Comment> id;
@@ -166,10 +166,15 @@ implements Identifiable<Comment>
 		return this.content;
 	}
 
-	private final Comment commentToRespondeTo;
+	private final Comment parent;
 
 	public Comment getParent ( )
 	{
-		return this.commentToRespondeTo;
+		return this.parent;
+	}
+
+	public Comment responde (Member responder, String message)
+	{
+		return Comment.newInstance(this, responder, message);
 	}
 }

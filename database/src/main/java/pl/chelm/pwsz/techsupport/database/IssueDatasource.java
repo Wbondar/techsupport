@@ -59,7 +59,7 @@ implements Datasource
 	{
 		try
 		{
-			CallableStatement statement = this.prepareCall ("{CALL issue_update_assign_tag (?, ?, ?)}");
+			CallableStatement statement = this.prepareCall ("{CALL issue_update_tag_assign (?, ?, ?)}");
 			statement.setInt(1, idOfMember);
 			statement.setInt(2, idOfIssue);
 			statement.setInt(3, idOfTag);
@@ -73,7 +73,7 @@ implements Datasource
 	{
 		try
 		{
-			CallableStatement statement = this.prepareCall ("{CALL issue_update_unassign_tag (?, ?, ?)}");
+			CallableStatement statement = this.prepareCall ("{CALL issue_update_tag_unassign (?, ?, ?)}");
 			statement.setInt(1, idOfMember);
 			statement.setInt(2, idOfIssue);
 			statement.setInt(3, idOfTag);

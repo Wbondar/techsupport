@@ -43,9 +43,15 @@ implements Identifiable<Member>
 
 	private static Member newInstance (String name, String password)
 	{
-		int id = Member.writeToDatabase(name, password);
-		Member member = new Member (id, name);
-		Member.cache(member);
+		Member member = null;
+		try
+		{
+			int id = Member.writeToDatabase(name, password);
+			member = new Member (id, name);
+			Member.cache(member);
+		} catch (Exception e) {
+			return null;
+		}
 		return member;
 	}
 
@@ -56,12 +62,11 @@ implements Identifiable<Member>
 		{
 			Identificator<Member> id = new Identificator<Member> (data.<Integer>get(Integer.class, "id"));
 			Member member = Member.readFromCache(id);
-			if (member != null)
+			if (member == null)
 			{
-				return member;
+				member = new Member (id, name);
+				Member.cache(member);
 			}
-			member = new Member (id, name);
-			Member.cache(member);
 			return member;
 		}
 		return Member.newInstance(name, password);

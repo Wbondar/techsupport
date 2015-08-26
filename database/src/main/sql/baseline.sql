@@ -258,6 +258,11 @@ CREATE VIEW view_tag AS
 SELECT * FROM tag 
 ;
 
+CREATE VIEW view_tag_usage AS
+SELECT tag_usage.issue_id, view_tag.*
+FROM tag_usage JOIN view_tag ON tag_usage.tag_id = view_tag.id 
+;
+
 CREATE VIEW view_comment AS 
 SELECT * FROM message 
 ;
