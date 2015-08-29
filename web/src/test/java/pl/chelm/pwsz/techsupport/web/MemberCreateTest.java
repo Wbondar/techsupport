@@ -20,8 +20,9 @@ extends TestCase
     {
     }
 
-    public void testSignUp ( ) {
-        beginAt("/index.jsp");
+    public void testSignUp ( ) 
+    {
+        beginAt("/");
         assertFormPresent("sign_up");
         setTextField("username", "test");
         setTextField("password", "test123");

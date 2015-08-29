@@ -1,5 +1,7 @@
 package pl.chelm.pwsz.techsupport.domain;
 
+import java.util.Set;
+
 import pl.chelm.pwsz.techsupport.database.*;
 import pl.chelm.pwsz.techsupport.services.*;
 
@@ -100,6 +102,11 @@ implements Identifiable<Member>
 	public String getName ( )
 	{
 		return this.name;
+	}
+
+	public Set<Issue> getIssues ( )
+	{
+		return Issue.getInstance(this);
 	}
 
 	private final Identificator<Member> id;

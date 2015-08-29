@@ -55,6 +55,7 @@ extends Object
 		while (resultSet.next( ))
 		{
 			Data data = new Data ( );
+			columnsLeft = metaData.getColumnCount( );
 			while (columnsLeft > 0)
 			{
 				data.put(metaData.getColumnLabel(columnsLeft), resultSet.getObject(columnsLeft));

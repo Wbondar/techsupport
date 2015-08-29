@@ -17,7 +17,7 @@
   <aside>
     <section>
       <h2>Add tag.</h2>
-      <form method='POST' action='/issue/update/tag/assign'>
+      <form name='tag_assign' method='POST' action='/issue/update/tag/assign'>
         <input type='hidden' name='issue_id' value='<%= issue.getId( ) %>' required />
         <input type='text' name='tag_title' required />
         <input type='submit' />
@@ -25,7 +25,7 @@
     </section>
     <section>
       <h2>Comment.</h2>
-      <form method='POST' action='/comment/create'>
+      <form name='comment' method='POST' action='/comment/create'>
         <input type='hidden' name='issue_id' value='<%= issue.getId( ) %>' required />
         <textarea name='message' cols='30' rows='6' required></textarea>
         <input type='submit' />
@@ -51,7 +51,7 @@
             {
               stringBuilder.append("<li>");
               stringBuilder.append(tag.getTitle( ));
-              stringBuilder.append("<form method='POST' action='/issue/update/tag/unassign'>");
+              stringBuilder.append("<form name='" + tag.getTitle( ).toLowerCase( ).replaceAll("\\s+","") + "_unassign' method='POST' action='/issue/update/tag/unassign'>");
               stringBuilder.append("<input type='hidden' name='issue_id' value='" + issue.getId( ) + "' required />");
               stringBuilder.append("<input type='hidden' name='tag_id' value='" + tag.getId( ) + "' required />");
               stringBuilder.append("<input type='submit' />");

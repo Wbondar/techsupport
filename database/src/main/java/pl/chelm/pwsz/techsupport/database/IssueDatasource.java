@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.Types;
 
 import java.util.Map;
+import java.util.Collection;
 
 public final class IssueDatasource
 extends NativeDatasource
@@ -27,7 +28,12 @@ implements Datasource
 			statement.setString(3, description);
 			statement.registerOutParameter(4, Types.INTEGER);
 			statement.execute( );
-			return statement.getLong(4);
+			long id = statement.getLong(4);
+			if (id < 1)
+			{
+				id = (long) statement.getInt(4);
+			}
+			return id;
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to create a new issue.", e);
 		}
@@ -37,11 +43,23 @@ implements Datasource
 	{
 		try
 		{
-			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_issue WHERE id = ?;");
+			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_issue WHERE id = ? LIMIT 1;");
 			statement.setLong(1, idOfIssue);
 			return DataFactory.getFirstRow(statement.executeQuery( ));
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to fetch an issue from the database by it's key.", e);
+		}
+	}
+
+	public Collection<Data> readByIssuer (long idOfIssuer)
+	{
+		try
+		{
+			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_issue WHERE issuer_id = ?;");
+			statement.setLong(1, idOfIssuer);
+			return DataFactory.getAllRows(statement.executeQuery( ));
+		} catch (SQLException e) {
+			throw new DatasourceException ("Failed to fetch an issue from the database by it's issuer.", e);
 		}
 	}
 

@@ -1,7 +1,5 @@
 package pl.chelm.pwsz.techsupport.domain;
 
-/* TODO: Implement immutable class for handling tags assignation. */
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -51,17 +49,60 @@ implements Identifiable<Issue>
 		Issue issue = Issue.readFromCache(id);
 		if (issue == null)
 		{
-			Data data = readFromDatabase(id);
+			Data data = Issue.readFromDatabase(id);
 			if (data == null)
 			{
 				return null;
 			}
-			Identificator<Member> idOfMember = new Identificator<Member> (data.<Long>get(Long.class, "issuer_id"));
-			Member issuer = Member.getInstance(idOfMember);
-			issue = new Issue(id, issuer, data.<String>get(String.class, "title"), data.<String>get(String.class, "message"));
+			issue = Issue.getInstance(data);
+		}
+		return issue;
+	}
+
+	private static Collection<Data> readFromDatabaseByIssuer (Identificator<Member> idOfIssuer)
+	{
+		IssueDatasource datasource = DatasourceFactory.<IssueDatasource>getInstance(IssueDatasource.class);
+		return datasource.readByIssuer (idOfIssuer.longValue( ));
+	}
+
+	static Issue getInstance (Data data)
+	{
+		Long idOfIssueValue = data.<Long>get(Long.class, "id");
+		if (idOfIssueValue == null)
+		{
+			throw new RuntimeException ("Data is malformed.");
+		}
+		Identificator<Issue> idOfIssue = new Identificator<Issue> (idOfIssueValue);
+		Issue issue = Issue.readFromCache(idOfIssue);
+		if (issue == null)
+		{
+			Identificator<Member> idOfIssuer = new Identificator<Member> (data.<Long>get(Long.class, "issuer_id"));;
+			Member issuer = Member.getInstance(idOfIssuer);
+			String title = data.<String>get(String.class, "title");
+			String message = data.<String>get(String.class, "message");
+			issue = new Issue (idOfIssue, issuer, title, message);
 			Issue.cache(issue);
 		}
 		return issue;
+	}
+
+	public static Set<Issue> getInstance (Member issuer)
+	{
+		Collection<Data> collectionOfData = Issue.readFromDatabaseByIssuer (issuer.getId( ));
+		if (collectionOfData == null)
+		{
+			return null;
+		}
+		Set<Issue> setOfIssues = new HashSet<Issue> ( );
+		for (Data data : collectionOfData)
+		{
+			Issue issue = Issue.getInstance(data);
+			if (issue != null)
+			{
+				setOfIssues.add(issue);
+			}
+		}
+		return Collections.<Issue>unmodifiableSet(setOfIssues);
 	}
 
 	private final Member issuer;

@@ -29,7 +29,12 @@ implements Datasource
 			statement.setString(2, PasswordHandler.hash(password));
 			statement.registerOutParameter(3, Types.INTEGER);
 			statement.execute( );
-			return statement.getLong(3);
+			long id = statement.getLong(3);
+			if (id < 1)
+			{
+				id = (long) statement.getInt(3);
+			}
+			return id;
 		} catch (Exception e) {
 			throw new DatasourceException ("Failed to create a new member.", e);
 		}
