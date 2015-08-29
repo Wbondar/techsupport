@@ -20,7 +20,7 @@ implements Datasource
 		super(queryManager);
 	}
 
-	public int create (String name, String password)
+	public long create (String name, String password)
 	{
 		try
 		{
@@ -29,18 +29,18 @@ implements Datasource
 			statement.setString(2, PasswordHandler.hash(password));
 			statement.registerOutParameter(3, Types.INTEGER);
 			statement.execute( );
-			return statement.getInt(3);
+			return statement.getLong(3);
 		} catch (Exception e) {
 			throw new DatasourceException ("Failed to create a new member.", e);
 		}
 	}
 
-	public Data read (int idOfMember)
+	public Data read (long idOfMember)
 	{
 		try
 		{
 			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_member WHERE id = ? LIMIT 1;");
-			statement.setInt(1, idOfMember);
+			statement.setLong(1, idOfMember);
 			return DataFactory.getFirstRow(statement.executeQuery( ));
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to fetch a member from the database by their's key.", e);

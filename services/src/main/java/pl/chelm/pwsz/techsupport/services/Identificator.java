@@ -3,22 +3,36 @@ package pl.chelm.pwsz.techsupport.services;
 public final class Identificator<T>
 extends Number
 {
-	private final int value;
+	/**
+	 * MySQL casts MEDIUMINT UNSIGNED, INTEGER UNSIGNED and BIGINT
+	 * to java.lang.Long hence long primitive type usage.
+	 */
+	private final long value;
 
-	public Identificator (int value)
+	public Identificator (long value)
 	{
 		this.value = value;
 	}
 
+	public Identificator (Long value)
+	{
+		this(value.longValue( ));
+	}
+
+	public Identificator (int value)
+	{
+		this((long)value);
+	}
+
 	public Identificator (String value)
 	{
-		this(Integer.parseInt(value));
+		this(Long.parseLong(value));
 	}
 
 	@Override
 	public byte byteValue ( )
 	{
-		return (byte)this.value;
+		return Long.valueOf(this.value).byteValue( );
 	}
 
 	@Override
@@ -36,13 +50,13 @@ extends Number
 	@Override
 	public int intValue ( )
 	{
-		return this.value;
+		return (int)this.value;
 	}
 
 	@Override
 	public long longValue ( )
 	{
-		return (long)this.value;
+		return this.value;
 	}
 
 	@Override
@@ -68,12 +82,12 @@ extends Number
 	@Override
 	public int hashCode ( )
 	{
-		return this.value;
+		return Long.valueOf(this.value).intValue( );
 	}
 
 	@Override
 	public String toString ( )
 	{
-		return Integer.toString(this.value);
+		return Long.toString(this.value);
 	}
 }

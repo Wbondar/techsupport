@@ -17,35 +17,35 @@ implements Datasource
 		super(queryManager);
 	}
 
-	public int create (int idOfMemberThatIsCreator, String title, String description)
+	public long create (long idOfMemberThatIsCreator, String title, String description)
 	{
 		try
 		{
 			CallableStatement statement = this.prepareCall ("{CALL issue_create (?, ?, ?, ?)}");
-			statement.setInt(1, idOfMemberThatIsCreator);
+			statement.setLong(1, idOfMemberThatIsCreator);
 			statement.setString(2, title);
 			statement.setString(3, description);
 			statement.registerOutParameter(4, Types.INTEGER);
 			statement.execute( );
-			return statement.getInt(4);
+			return statement.getLong(4);
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to create a new issue.", e);
 		}
 	}
 
-	public Data read (int idOfIssue)
+	public Data read (long idOfIssue)
 	{
 		try
 		{
 			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_issue WHERE id = ?;");
-			statement.setInt(1, idOfIssue);
+			statement.setLong(1, idOfIssue);
 			return DataFactory.getFirstRow(statement.executeQuery( ));
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to fetch an issue from the database by it's key.", e);
 		}
 	}
 
-	public void updateTag (int idOfIssue, int idOfMember, int idOfTag, boolean isAssigned)
+	public void updateTag (long idOfIssue, long idOfMember, long idOfTag, boolean isAssigned)
 	{
 		if (isAssigned)
 		{
@@ -55,28 +55,28 @@ implements Datasource
 		}
 	}
 
-	public void assignTag (int idOfIssue, int idOfMember, int idOfTag)
+	public void assignTag (long idOfIssue, long idOfMember, long idOfTag)
 	{
 		try
 		{
 			CallableStatement statement = this.prepareCall ("{CALL issue_update_tag_assign (?, ?, ?)}");
-			statement.setInt(1, idOfMember);
-			statement.setInt(2, idOfIssue);
-			statement.setInt(3, idOfTag);
+			statement.setLong(1, idOfMember);
+			statement.setLong(2, idOfIssue);
+			statement.setLong(3, idOfTag);
 			statement.executeQuery( );
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to write to the database an issue tag assignation.", e);
 		}
 	}
 
-	public void unassignTag (int idOfIssue, int idOfMember, int idOfTag)
+	public void unassignTag (long idOfIssue, long idOfMember, long idOfTag)
 	{
 		try
 		{
 			CallableStatement statement = this.prepareCall ("{CALL issue_update_tag_unassign (?, ?, ?)}");
-			statement.setInt(1, idOfMember);
-			statement.setInt(2, idOfIssue);
-			statement.setInt(3, idOfTag);
+			statement.setLong(1, idOfMember);
+			statement.setLong(2, idOfIssue);
+			statement.setLong(3, idOfTag);
 			statement.executeQuery( );
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to write to the database an issue tag unassignation.", e);

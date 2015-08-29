@@ -27,12 +27,17 @@ extends HttpServlet
 			throw new RuntimeException ("Password is missing.");
 		}
 		int i = 0;
-		PrintWriter writer = response.getWriter( );
+		boolean success = true;
 		for (i = 0; i < usernames.length; i++)
 		{
 			Member member = Member.getInstance(usernames[i], passwords[i]);
-			writer.println(member);
+			success = member.getName( ).equals(usernames[i]) && success;
 		}
-		writer.close( );
+		if (success)
+		{
+			response.setStatus(HttpServletResponse.SC_CREATED);
+		} else {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to proccess the request for unknown reason. Please check if input was correct.");
+		}
 	}
 }

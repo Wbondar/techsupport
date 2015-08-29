@@ -1,9 +1,5 @@
 package pl.chelm.pwsz.techsupport.domain;
 
-/* TODO: Implement caching for members. */
-/* TODO: Implement persistency for members. */
-/* TODO: Implement basic authenticaton for members. */
-
 import pl.chelm.pwsz.techsupport.database.*;
 import pl.chelm.pwsz.techsupport.services.*;
 
@@ -26,7 +22,7 @@ implements Identifiable<Member>
 	private static Data readFromDatabase (Identificator<Member> id)
 	{
 		MemberDatasource datasource = DatasourceFactory.<MemberDatasource>getInstance(MemberDatasource.class);
-		return datasource.read(id.intValue( ));
+		return datasource.read(id.longValue( ));
 	}
 
 	private static Data readFromDatabase (String name, String password)
@@ -35,7 +31,7 @@ implements Identifiable<Member>
 		return datasource.read(name, password);
 	}
 
-	private static int writeToDatabase (String name, String password)
+	private static long writeToDatabase (String name, String password)
 	{
 		MemberDatasource datasource = DatasourceFactory.<MemberDatasource>getInstance(MemberDatasource.class);
 		return datasource.create(name, password);
@@ -46,7 +42,7 @@ implements Identifiable<Member>
 		Member member = null;
 		try
 		{
-			int id = Member.writeToDatabase(name, password);
+			long id = Member.writeToDatabase(name, password);
 			member = new Member (id, name);
 			Member.cache(member);
 		} catch (Exception e) {
@@ -60,7 +56,7 @@ implements Identifiable<Member>
 		Data data = Member.readFromDatabase(name, password);
 		if (data != null)
 		{
-			Identificator<Member> id = new Identificator<Member> (data.<Integer>get(Integer.class, "id"));
+			Identificator<Member> id = new Identificator<Member> (data.<Long>get(Long.class, "id"));
 			Member member = Member.readFromCache(id);
 			if (member == null)
 			{
@@ -90,7 +86,7 @@ implements Identifiable<Member>
 
 	private final String name;
 
-	private Member (int id, String name)
+	private Member (long id, String name)
 	{
 		this(new Identificator<Member> (id), name);
 	}

@@ -1,8 +1,5 @@
 package pl.chelm.pwsz.techsupport.domain;
 
-/* TODO: Implement caching for tags. */
-/* TODO: Implement persistency for tags. */
-
 import pl.chelm.pwsz.techsupport.database.*;
 import pl.chelm.pwsz.techsupport.services.*;
 
@@ -22,7 +19,7 @@ implements Identifiable<Tag>
 		return cache.get(id);
 	}
 
-	private static int writeToDatabase (String title)
+	private static long writeToDatabase (String title)
 	{
 		TagDatasource datasource = DatasourceFactory.<TagDatasource>getInstance(TagDatasource.class);
 		return datasource.create(title);
@@ -37,12 +34,12 @@ implements Identifiable<Tag>
 	private static Data readFromDatabase (Identificator<Tag> id)
 	{
 		TagDatasource datasource = DatasourceFactory.<TagDatasource>getInstance(TagDatasource.class);
-		return datasource.read(id.intValue( ));
+		return datasource.read(id.longValue( ));
 	}
 
 	private static Tag newInstance (String title)
 	{
-		int idValue = Tag.writeToDatabase(title);
+		long idValue = Tag.writeToDatabase(title);
 		Identificator<Tag> id = new Identificator<Tag> (idValue);
 		Tag tag = new Tag (id, title);
 		Tag.cache(tag);
@@ -55,7 +52,7 @@ implements Identifiable<Tag>
 		Data data = Tag.readFromDatabase(title);
 		if (data != null)
 		{
-			Identificator<Tag> id = new Identificator<Tag> (data.<Integer>get(Integer.class, "id"));
+			Identificator<Tag> id = new Identificator<Tag> (data.<Long>get(Long.class, "id"));
 			tag = Tag.readFromCache(id);
 			if (tag == null)
 			{
@@ -85,7 +82,7 @@ implements Identifiable<Tag>
 
 	public static Tag getInstance (Data data)
 	{
-		Identificator<Tag> id = new Identificator<Tag> (data.<Integer>get(Integer.class, "id"));
+		Identificator<Tag> id = new Identificator<Tag> (data.<Long>get(Long.class, "id"));
 		Tag tag = Tag.readFromCache(id);
 		if (tag == null)
 		{
@@ -98,7 +95,7 @@ implements Identifiable<Tag>
 
 	private final String title;
 
-	private Tag (int id, String title)
+	private Tag (long id, String title)
 	{
 		this(new Identificator<Tag> (id), title);
 	}

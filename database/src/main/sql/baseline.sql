@@ -1,11 +1,11 @@
 /**
  * @Author Vladyslav Bondarenko
- * @Date   2015-08-20
+ * @Date   2015-08-28
  */
 
 CREATE TABLE member
 (
-      id            SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT
+      id            INTEGER UNSIGNED NOT NULL AUTO_INCREMENT
     , name          VARCHAR(100)      NOT NULL
     , password_hash TEXT              NOT NULL 
     , created_at    TIMESTAMP         NOT NULL
@@ -18,9 +18,14 @@ CREATE TABLE message
 (
       id        INTEGER UNSIGNED  NOT NULL AUTO_INCREMENT
     , parent_id INTEGER UNSIGNED      NULL
-    , author_id SMALLINT UNSIGNED NOT NULL
+    , author_id INTEGER UNSIGNED NOT NULL
     , content   TEXT              NOT NULL
     , posted_at TIMESTAMP         NOT NULL
+    /**
+     * It would be nicer to use a composite key for primary key of "message" table
+     * but for the sake of simplisity and flexebility
+     * surrogate key is used instead.
+     */
     , PRIMARY KEY (id)
     , FOREIGN KEY (parent_id) REFERENCES message (id)
         ON DELETE RESTRICT
@@ -35,7 +40,7 @@ CREATE TABLE message
 CREATE TABLE issue 
 (
       id             INTEGER UNSIGNED  NOT NULL AUTO_INCREMENT
-    , issuer_id      SMALLINT UNSIGNED NOT NULL
+    , issuer_id      INTEGER UNSIGNED NOT NULL
     , title          VARCHAR(100)      NOT NULL
     , description_id INTEGER UNSIGNED  NOT NULL
     , created_at     TIMESTAMP         NOT NULL
@@ -52,9 +57,23 @@ CREATE TABLE issue
 )
 ;
 
+CREATE TABLE comment 
+(
+      issue_id   INTEGER UNSIGNED NOT NULL 
+    , message_id INTEGER UNSIGNED NOT NULL
+    , PRIMARY KEY (issue_id, message_id)
+    , FOREIGN KEY (issue_id) REFERENCES issue (id)
+        ON DELETE RESTRICT 
+        ON UPDATE RESTRICT 
+    , FOREIGN KEY (message_id) REFERENCES message (id)
+        ON DELETE RESTRICT 
+        ON UPDATE RESTRICT
+)
+;
+
 CREATE TABLE tag
 (
-      id         SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT
+      id         INTEGER UNSIGNED NOT NULL AUTO_INCREMENT
     , title      VARCHAR(100)      NOT NULL
     , created_at TIMESTAMP         NOT NULL
     , PRIMARY KEY (id)
@@ -65,7 +84,7 @@ CREATE TABLE tag
 CREATE TABLE tag_usage
 (
       issue_id INTEGER UNSIGNED  NOT NULL
-    , tag_id   SMALLINT UNSIGNED NOT NULL
+    , tag_id   INTEGER UNSIGNED NOT NULL
     , PRIMARY KEY (issue_id, tag_id)
     , FOREIGN KEY (issue_id) REFERENCES issue (id)
         ON DELETE RESTRICT
@@ -87,9 +106,9 @@ CREATE TABLE tag_usage
 CREATE TABLE tag_assignation
 (
       id          INTEGER UNSIGNED  NOT NULL AUTO_INCREMENT
-    , assigner_id SMALLINT UNSIGNED NOT NULL
+    , assigner_id INTEGER UNSIGNED NOT NULL
     , issue_id    INTEGER UNSIGNED  NOT NULL
-    , tag_id      SMALLINT UNSIGNED NOT NULL
+    , tag_id      INTEGER UNSIGNED NOT NULL
     , assigned_at TIMESTAMP         NOT NULL
     , PRIMARY KEY (id)
     , FOREIGN KEY (assigner_id) REFERENCES member (id)
@@ -109,9 +128,9 @@ CREATE TABLE tag_assignation
 CREATE TABLE tag_unassignation
 (
       id            INTEGER UNSIGNED  NOT NULL AUTO_INCREMENT
-    , unassigner_id SMALLINT UNSIGNED NOT NULL
+    , unassigner_id INTEGER UNSIGNED NOT NULL
     , issue_id      INTEGER UNSIGNED  NOT NULL
-    , tag_id        SMALLINT UNSIGNED NOT NULL
+    , tag_id        INTEGER UNSIGNED NOT NULL
     , unassigned_at TIMESTAMP         NOT NULL
     , PRIMARY KEY (id)
     /*
@@ -128,7 +147,7 @@ CREATE TABLE tag_unassignation
 DELIMITER ENDROUTINE
 CREATE PROCEDURE issue_create
 (
-      IN  arg_issuer_id   SMALLINT UNSIGNED 
+      IN  arg_issuer_id   INTEGER UNSIGNED 
     , IN  arg_title       VARCHAR (100)
     , IN  arg_description TEXT
     , OUT arg_issue_id    INTEGER UNSIGNED 
@@ -149,9 +168,9 @@ DELIMITER ;
 DELIMITER ENDROUTINE
 CREATE PROCEDURE issue_update_tag_assign
 (
-      IN arg_assigner_id SMALLINT UNSIGNED
+      IN arg_assigner_id INTEGER UNSIGNED
     , IN arg_issue_id    INTEGER UNSIGNED 
-    , IN arg_tag_id      SMALLINT UNSIGNED 
+    , IN arg_tag_id      INTEGER UNSIGNED 
 )
 BEGIN
     INSERT INTO tag_usage (issue_id, tag_id) 
@@ -164,9 +183,9 @@ DELIMITER ;
 DELIMITER ENDROUTINE
 CREATE PROCEDURE issue_update_tag_unassign
 (
-      IN arg_unassigner_id SMALLINT UNSIGNED
+      IN arg_unassigner_id INTEGER UNSIGNED
     , IN arg_issue_id      INTEGER UNSIGNED 
-    , IN arg_tag_id        SMALLINT UNSIGNED 
+    , IN arg_tag_id        INTEGER UNSIGNED 
 )
 BEGIN
     DELETE FROM tag_usage 
@@ -181,7 +200,7 @@ CREATE PROCEDURE member_create
 (
       IN  arg_name          VARCHAR (100)
     , IN  arg_password_hash TEXT
-    , OUT arg_member_id     SMALLINT UNSIGNED 
+    , OUT arg_member_id     INTEGER UNSIGNED 
 )
 BEGIN
     INSERT INTO member (name, password_hash, created_at)
@@ -197,7 +216,7 @@ DELIMITER ENDROUTINE
 CREATE PROCEDURE tag_create
 (
       IN  arg_title  VARCHAR (100)
-    , OUT arg_tag_id SMALLINT UNSIGNED 
+    , OUT arg_tag_id INTEGER UNSIGNED 
 )
 BEGIN
     INSERT INTO tag (title, created_at)
@@ -210,13 +229,13 @@ ENDROUTINE
 DELIMITER ;
 
 DELIMITER ENDROUTINE
-CREATE PROCEDURE response_create
+CREATE PROCEDURE message_create
 (
       IN  arg_parent_id   INTEGER UNSIGNED 
-    , IN  arg_author_id   SMALLINT UNSIGNED 
+    , IN  arg_author_id   INTEGER UNSIGNED 
     , IN  arg_description TEXT
     , OUT arg_message_id  INTEGER UNSIGNED 
-    , OUT arg_when        DATETIME
+    , OUT arg_posted_at   TIMESTAMP
 )
 BEGIN
     INSERT INTO message (parent_id, author_id, content, posted_at)
@@ -224,7 +243,30 @@ BEGIN
     ;
     SELECT LAST_INSERT_ID( ) INTO arg_message_id 
     ;
-    SELECT NOW( ) INTO arg_when
+    SELECT NOW( ) INTO arg_posted_at
+    ;
+END 
+ENDROUTINE
+DELIMITER ;
+
+DELIMITER ENDROUTINE
+CREATE PROCEDURE response_create
+(
+      IN  arg_parent_id   INTEGER UNSIGNED 
+    , IN  arg_author_id   INTEGER UNSIGNED 
+    , IN  arg_description TEXT
+    , OUT arg_message_id  INTEGER UNSIGNED 
+    , OUT arg_posted_at   TIMESTAMP
+)
+BEGIN
+    CALL message_create (arg_parent_id, arg_author_id, arg_description, arg_message_id, arg_posted_at)
+    ;
+    SELECT issue_id INTO @var_issue_id 
+    FROM view_comment 
+    WHERE view_comment.id = arg_parent_id 
+    ;
+    INSERT INTO comment (issue_id, message_id)
+    VALUES (@var_issue_id, arg_message_id)
     ;
 END 
 ENDROUTINE
@@ -234,17 +276,20 @@ DELIMITER ENDROUTINE
 CREATE PROCEDURE comment_create
 (
       IN  arg_issue_id    INTEGER UNSIGNED 
-    , IN  arg_author_id   SMALLINT UNSIGNED 
+    , IN  arg_author_id   INTEGER UNSIGNED 
     , IN  arg_description TEXT
     , OUT arg_message_id  INTEGER UNSIGNED 
-    , OUT arg_when        DATETIME
+    , OUT arg_posted_at   TIMESTAMP
 )
 BEGIN
     SELECT issue.description_id INTO @var_parent_id
     FROM issue 
     WHERE issue.id = arg_issue_id
     ;
-    CALL response_create (@var_parent_id, arg_author_id, arg_description, arg_message_id, arg_when)
+    CALL message_create (@var_parent_id, arg_author_id, arg_description, arg_message_id, arg_posted_at)
+    ;
+    INSERT INTO comment (issue_id, message_id)
+    VALUES (arg_issue_id, arg_message_id)
     ;
 END 
 ENDROUTINE
@@ -268,7 +313,8 @@ FROM tag_usage JOIN view_tag ON tag_usage.tag_id = view_tag.id
 ;
 
 CREATE VIEW view_comment AS 
-SELECT * FROM message 
+SELECT comment.issue_id, message.* 
+FROM comment JOIN message ON comment.message_id = message.id
 ;
 
 SELECT "Database successfully deployed to the server."

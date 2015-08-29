@@ -29,18 +29,18 @@ implements Identifiable<Issue>
 	private static Data readFromDatabase (Identificator<Issue> id)
 	{
 		IssueDatasource datasource = DatasourceFactory.<IssueDatasource>getInstance(IssueDatasource.class);
-		return datasource.read(id.intValue( ));
+		return datasource.read(id.longValue( ));
 	}
 
-	private static int writeToDatabase (Member issuer, String title, String message)
+	private static long writeToDatabase (Member issuer, String title, String message)
 	{
 		IssueDatasource datasource = DatasourceFactory.<IssueDatasource>getInstance(IssueDatasource.class);
-		return datasource.create(issuer.getId( ).intValue( ), title, message);
+		return datasource.create(issuer.getId( ).longValue( ), title, message);
 	}
 
 	public static Issue newInstance (Member issuer, String title, String message)
 	{
-		int id = Issue.writeToDatabase(issuer, title, message);
+		long id = Issue.writeToDatabase(issuer, title, message);
 		Issue issue = new Issue (id, issuer, title, message);
 		Issue.cache(issue);
 		return issue;
@@ -56,7 +56,7 @@ implements Identifiable<Issue>
 			{
 				return null;
 			}
-			Identificator<Member> idOfMember = new Identificator<Member> (data.<Integer>get(Integer.class, "issuer_id"));
+			Identificator<Member> idOfMember = new Identificator<Member> (data.<Long>get(Long.class, "issuer_id"));
 			Member issuer = Member.getInstance(idOfMember);
 			issue = new Issue(id, issuer, data.<String>get(String.class, "title"), data.<String>get(String.class, "message"));
 			Issue.cache(issue);
@@ -68,7 +68,7 @@ implements Identifiable<Issue>
 	private final String title;
 	private final String message;
 
-	private Issue (int id, Member issuer, String title, String message)
+	private Issue (long id, Member issuer, String title, String message)
 	{
 		this(new Identificator<Issue> (id), issuer, title, message);
 	}
@@ -127,7 +127,7 @@ implements Identifiable<Issue>
 
 	public Set<Comment> getComments ( )
 	{
-		return null;
+		return Comment.getInstance(this);
 	}
 
 	private final Identificator<Issue> id;

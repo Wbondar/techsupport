@@ -17,28 +17,16 @@ extends HttpServlet
 	{
 		String message = request.getParameter("message");
 		Member author = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
-			if (author == null)
-			{
-				throw new RuntimeException ("Author is missing.");
-			}
-		String idOfParentValue = request.getParameter("parent_id");
-		Comment parent = null;
-		if (idOfParentValue != null)
+		if (author == null)
 		{
-			Identificator<Comment> idOfParent = new Identificator<Comment> (idOfParentValue);
-			parent = Comment.getInstance(idOfParent);
+			throw new RuntimeException ("Author is missing.");
 		}
-		if (parent != null)
+		Identificator<Issue> idOfIssue = new Identificator<Issue> (request.getParameter("issue_id"));
+		Issue issue = Issue.getInstance(idOfIssue);
+		if (issue == null)
 		{
-			Comment comment = Comment.newInstance(parent, author, message);
-		} else {
-			Identificator<Issue> idOfIssue = new Identificator<Issue> (request.getParameter("issue_id"));
-			Issue issue = Issue.getInstance(idOfIssue);
-			if (issue == null)
-			{
-				throw new RuntimeException ("Issue is missing.");
-			}
-			Comment comment = Comment.newInstance(issue, author, message);
+			throw new RuntimeException ("Issue is missing.");
 		}
+		issue.comment(author, message);
 	}
 }

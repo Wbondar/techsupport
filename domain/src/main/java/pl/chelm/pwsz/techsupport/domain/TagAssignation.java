@@ -20,13 +20,13 @@ extends Object
 	private static void writeAssignationToDatabase (Identificator<Member> idOfAssigner, Identificator<Issue> idOfIssue, Identificator<Tag> idOfTag)
 	{
 		IssueDatasource datasource = DatasourceFactory.<IssueDatasource>getInstance(IssueDatasource.class);
-		datasource.assignTag(idOfIssue.intValue( ), idOfAssigner.intValue( ), idOfTag.intValue( ));
+		datasource.assignTag(idOfIssue.longValue( ), idOfAssigner.longValue( ), idOfTag.longValue( ));
 	}
 
 	private static void writeUnassignationToDatabase (Identificator<Member> idOfAssigner, Identificator<Issue> idOfIssue, Identificator<Tag> idOfTag)
 	{
 		IssueDatasource datasource = DatasourceFactory.<IssueDatasource>getInstance(IssueDatasource.class);
-		datasource.unassignTag(idOfIssue.intValue( ), idOfAssigner.intValue( ), idOfTag.intValue( ));
+		datasource.unassignTag(idOfIssue.longValue( ), idOfAssigner.longValue( ), idOfTag.longValue( ));
 	}
 
 	public static TagAssignation newInstance (Member assigner, Issue issueToAssignTagTo, Tag tagToBeAssigned)
@@ -49,7 +49,7 @@ extends Object
 	public static Set<Tag> getTagsAssignedTo (Issue issue)
 	{
 		TagDatasource datasource = DatasourceFactory.<TagDatasource>getInstance(TagDatasource.class);
-		Collection<Data> collectionOfData = datasource.readAssignedTo(issue.getId( ).intValue( ));
+		Collection<Data> collectionOfData = datasource.readAssignedTo(issue.getId( ).longValue( ));
 		if (collectionOfData == null)
 		{
 			return Collections.<Tag>emptySet( );

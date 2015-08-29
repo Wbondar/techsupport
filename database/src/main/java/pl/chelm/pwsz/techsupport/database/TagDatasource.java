@@ -18,7 +18,7 @@ implements Datasource
 		super(queryManager);
 	}
 
-	public int create (String title)
+	public long create (String title)
 	{
 		try
 		{
@@ -26,18 +26,18 @@ implements Datasource
 			statement.setString(1, title);
 			statement.registerOutParameter(2, Types.INTEGER);
 			statement.execute( );
-			return statement.getInt(2);
+			return statement.getLong(2);
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to create a new tag.", e);
 		}
 	}
 
-	public Data read (int idOfTag)
+	public Data read (long idOfTag)
 	{
 		try
 		{
 			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_tag WHERE id = ? LIMIT 1;");
-			statement.setInt(1, idOfTag);
+			statement.setLong(1, idOfTag);
 			return DataFactory.getFirstRow(statement.executeQuery( ));
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to fetch a tag from the database by it's key.", e);
@@ -56,12 +56,12 @@ implements Datasource
 		}
 	}
 
-	public Collection<Data> readAssignedTo (int idOfIssue)
+	public Collection<Data> readAssignedTo (long idOfIssue)
 	{
 		try
 		{
 			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_tag_usage WHERE issue_id = ?;");
-			statement.setInt(1, idOfIssue);
+			statement.setLong(1, idOfIssue);
 			return DataFactory.getAllRows(statement.executeQuery( ));
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to fetch tags assigned to issue from the database.", e);

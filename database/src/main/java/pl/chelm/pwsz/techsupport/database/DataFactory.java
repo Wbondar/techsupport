@@ -28,13 +28,13 @@ extends Object
 			return null;
 		}
 		resultSet.next( );
-		Map<String, Object> mapping = new HashMap<String, Object> ( );
+		Data data = new Data ( );
 		while (columnsLeft > 0)
 		{
-			mapping.put(metaData.getColumnLabel(columnsLeft), resultSet.getObject(columnsLeft));
+			data.put(metaData.getColumnLabel(columnsLeft), resultSet.getObject(columnsLeft));
 			columnsLeft--;
 		}
-		return new Data (mapping);
+		return data;
 	}
 
 	public static Collection<Data> getAllRows (ResultSet resultSet)
@@ -54,13 +54,12 @@ extends Object
 		List<Data> collectionOfData = new ArrayList<Data> ( );
 		while (resultSet.next( ))
 		{
-			Map<String, Object> mapping = new HashMap<String, Object> ( );
+			Data data = new Data ( );
 			while (columnsLeft > 0)
 			{
-				mapping.put(metaData.getColumnLabel(columnsLeft), resultSet.getObject(columnsLeft));
+				data.put(metaData.getColumnLabel(columnsLeft), resultSet.getObject(columnsLeft));
 				columnsLeft--;
 			}
-			Data data = new Data (mapping);
 			collectionOfData.add(data);
 		}
 		return collectionOfData;
