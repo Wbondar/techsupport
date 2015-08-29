@@ -8,18 +8,13 @@ import javax.servlet.http.*;
 import pl.chelm.pwsz.techsupport.domain.*;
 import pl.chelm.pwsz.techsupport.services.*;
 
-public final class SessionDestroy
+public final class Home
 extends HttpServlet
 {
 	@Override
-	public void doPost (HttpServletRequest request, HttpServletResponse response)
+	public void doGet (HttpServletRequest request, HttpServletResponse response)
 	throws IOException, ServletException
 	{
-		HttpSession session = request.getSession(false);
-		if (session != null)
-		{
-			session.invalidate( );
-		}
-		Page.HOME.redirect(request, response);
+		Page.HOME.include(request, response);
 	}
 }

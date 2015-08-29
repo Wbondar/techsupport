@@ -20,11 +20,21 @@ extends HttpServlet
 		Member unassigner = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
 		String[] idOfTags = request.getParameterValues("tag_id");
 		int i = 0;
+		boolean success = true;
 		for (i = 0; i < idOfTags.length; i++)
 		{
 			Identificator<Tag> idOfTag = new Identificator<Tag> (idOfTags[i]);
 			Tag tag = Tag.getInstance(idOfTag);
 			issue = issue.unassignTag(unassigner, tag);
+			success = !issue.containsTag(tag) && success;
+		}
+		if (success)
+		{
+			response.setStatus(HttpServletResponse.SC_OK);
+			Page.ISSUE.setParameter("id", issue.getId( ));
+			Page.ISSUE.redirect(request, response);
+		} else {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to proccess the request for unknown reason. Please check if input was correct.");
 		}
 	}
 }

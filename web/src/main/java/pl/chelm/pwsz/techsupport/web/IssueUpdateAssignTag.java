@@ -28,10 +28,20 @@ extends HttpServlet
 		}
 		String[] tagTitles = request.getParameterValues("tag_title");
 		int i = 0;
+		boolean success = true;
 		for (i = 0; i < tagTitles.length; i++)
 		{
 			Tag tag = Tag.getInstance(tagTitles[i]);
 			issue = issue.assignTag(assigner, tag);
+			success = issue.containsTag(tag) && success;
+		}
+		if (success)
+		{
+			response.setStatus(HttpServletResponse.SC_OK);
+			Page.ISSUE.setParameter("id", issue.getId( ));
+			Page.ISSUE.redirect(request, response);
+		} else {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to proccess the request for unknown reason. Please check if input was correct.");
 		}
 	}
 }

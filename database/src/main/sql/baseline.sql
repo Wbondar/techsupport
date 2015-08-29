@@ -1,6 +1,6 @@
 /**
  * @Author Vladyslav Bondarenko
- * @Date   2015-08-28
+ * @Date   2015-08-29
  */
 
 CREATE TABLE member
@@ -29,7 +29,7 @@ CREATE TABLE message
     , PRIMARY KEY (id)
     , FOREIGN KEY (parent_id) REFERENCES message (id)
         ON DELETE RESTRICT
-        ON UPDATE RESTRICT
+        ON UPDATE CASCADE
     , FOREIGN KEY (author_id) REFERENCES member (id)
         ON DELETE RESTRICT
         ON UPDATE RESTRICT
@@ -63,7 +63,7 @@ CREATE TABLE comment
     , message_id INTEGER UNSIGNED NOT NULL
     , PRIMARY KEY (issue_id, message_id)
     , FOREIGN KEY (issue_id) REFERENCES issue (id)
-        ON DELETE RESTRICT 
+        ON DELETE CASCADE 
         ON UPDATE RESTRICT 
     , FOREIGN KEY (message_id) REFERENCES message (id)
         ON DELETE RESTRICT 
@@ -87,11 +87,11 @@ CREATE TABLE tag_usage
     , tag_id   INTEGER UNSIGNED NOT NULL
     , PRIMARY KEY (issue_id, tag_id)
     , FOREIGN KEY (issue_id) REFERENCES issue (id)
-        ON DELETE RESTRICT
-        ON UPDATE RESTRICT
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
     , FOREIGN KEY (tag_id)   REFERENCES tag (id)
-        ON DELETE RESTRICT
-        ON UPDATE RESTRICT
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 )
 ;
 

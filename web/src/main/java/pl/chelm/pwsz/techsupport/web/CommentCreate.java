@@ -27,6 +27,14 @@ extends HttpServlet
 		{
 			throw new RuntimeException ("Issue is missing.");
 		}
-		issue.comment(author, message);
+		Comment comment = issue.comment(author, message);
+		if (comment != null)
+		{
+			response.setStatus(HttpServletResponse.SC_CREATED);
+			Page.ISSUE.setParameter("id", issue.getId( ));
+			Page.ISSUE.redirect(request, response);
+		} else {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to proccess the request for unknown reason. Please check if input was correct.");
+		}
 	}
 }

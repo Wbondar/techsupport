@@ -27,11 +27,6 @@ extends TestCase
         setTextField("username", IssueTest.USERNAME);
         setTextField("password", IssueTest.PASSWORD);
         submit( );
-        beginAt("/");
-        assertFormPresent("log_in");
-        setTextField("username", IssueTest.USERNAME);
-        setTextField("password", IssueTest.PASSWORD);
-        submit( );
     }
 
     protected void tearDown ( ) 
@@ -49,11 +44,22 @@ extends TestCase
 
     public void testPerform ( ) 
     {
+        logIn ( );
         create ( );
         read ( );
         assignTag ( );
         unassignTag ( );
         comment ( );
+    }
+
+    void logIn ( )
+    {
+        beginAt("/");
+        assertFormPresent("log_in");
+        setTextField("username", IssueTest.USERNAME);
+        setTextField("password", IssueTest.PASSWORD);
+        submit( );
+        assertResponseCode(200);
     }
 
     void create ( )

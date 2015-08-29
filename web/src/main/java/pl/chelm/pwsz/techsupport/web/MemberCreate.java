@@ -36,6 +36,7 @@ extends HttpServlet
 		if (success)
 		{
 			response.setStatus(HttpServletResponse.SC_CREATED);
+			Page.HOME.redirect(request, response);
 		} else {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to proccess the request for unknown reason. Please check if input was correct.");
 		}

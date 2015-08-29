@@ -46,6 +46,10 @@
     <servlet-name>TagCreate</servlet-name>
     <servlet-class>pl.chelm.pwsz.techsupport.web.TagCreate</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>Home</servlet-name>
+    <servlet-class>pl.chelm.pwsz.techsupport.web.Home</servlet-class>
+  </servlet>
   <!--
   <servlet>
     <servlet-name>TagUpdate</servlet-name>
@@ -92,4 +96,27 @@
     <servlet-name>TagCreate</servlet-name>
     <url-pattern>/tag/create</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Home</servlet-name>
+    <url-pattern></url-pattern>
+  </servlet-mapping>
+  <!--
+    Prevent the visiting of MVC Views from outside the servlet container.
+    RequestDispatcher.forward/include should and will still work.
+    Removing this may open security holes!
+  -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>JSP.</web-resource-name>
+      <url-pattern>*.jsp</url-pattern>
+    </web-resource-collection>
+    <web-resource-collection>
+      <web-resource-name>HTML documents.</web-resource-name>
+      <url-pattern>*.html</url-pattern>
+      <url-pattern>*.htm</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <!-- Nobody is allowed to visit these -->
+    </auth-constraint>
+  </security-constraint>
 </web-app>

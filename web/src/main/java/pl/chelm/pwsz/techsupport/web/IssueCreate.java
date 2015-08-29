@@ -19,9 +19,18 @@ extends HttpServlet
 		String[] messages = request.getParameterValues("message");
 		Member author = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
 		int i = 0;
+		boolean success = true;
 		for (i = 0; i < titles.length; i++)
 		{
 			Issue issue = Issue.newInstance(author, titles[i], messages[i]);
+			success = (issue != null) && success;
+		}
+		if (success)
+		{
+			response.setStatus(HttpServletResponse.SC_CREATED);
+			Page.HOME.redirect(request, response);
+		} else {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to proccess the request for unknown reason. Please check if input was correct.");
 		}
 	}
 }

@@ -18,13 +18,20 @@ extends HttpServlet
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		Member member = Member.getInstance(username, password);
-		HttpSession session = request.getSession(false);
-		if (session != null)
+		if (member != null)
 		{
-			session.invalidate( );
+			HttpSession session = request.getSession(false);
+			if (session != null)
+			{
+				session.invalidate( );
+			}
+			session = request.getSession( );
+			session.setMaxInactiveInterval(60*10);
+			session.setAttribute(Member.class.toString( ), member);
+			response.setStatus(HttpServletResponse.SC_OK);
+			Page.HOME.redirect(request, response);
+		} else {
+			response.sendError(HttpServletResponse.SC_OK);
 		}
-		session = request.getSession( );
-		session.setMaxInactiveInterval(60*10);
-		session.setAttribute(Member.class.toString( ), member);
 	}
 }

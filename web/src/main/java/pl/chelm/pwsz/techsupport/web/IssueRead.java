@@ -17,7 +17,13 @@ extends HttpServlet
 	{
 		Identificator<Issue> id = new Identificator<Issue> (request.getParameter("id"));
 		Issue issue = Issue.getInstance(id);
-		request.setAttribute(Issue.class.toString( ), issue);
-		request.getRequestDispatcher("/views/issue_read.jsp").include(request, response);
+		if (issue != null)
+		{
+			request.setAttribute(Issue.class.toString( ), issue);
+			response.setStatus(HttpServletResponse.SC_OK);
+			Page.ISSUE.include(request, response);
+		} else {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
 	}
 }
