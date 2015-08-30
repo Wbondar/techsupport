@@ -23,12 +23,12 @@
   	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueRead</servlet-class>
   </servlet>
   <servlet>
-  	<servlet-name>IssueUpdateAssignTag</servlet-name>
-  	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueUpdateAssignTag</servlet-class>
+  	<servlet-name>IssueUpdateTagAssign</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueUpdateTagAssign</servlet-class>
   </servlet>
   <servlet>
-  	<servlet-name>IssueUpdateUnassignTag</servlet-name>
-  	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueUpdateUnassignTag</servlet-class>
+  	<servlet-name>IssueUpdateTagUnassign</servlet-name>
+  	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueUpdateTagUnassign</servlet-class>
   </servlet>
   <servlet>
   	<servlet-name>MemberCreate</servlet-name>
@@ -73,11 +73,11 @@
     <url-pattern>/issue</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>IssueUpdateAssignTag</servlet-name>
+    <servlet-name>IssueUpdateTagAssign</servlet-name>
     <url-pattern>/issue/update/tag/assign</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>IssueUpdateUnassignTag</servlet-name>
+    <servlet-name>IssueUpdateTagUnassign</servlet-name>
     <url-pattern>/issue/update/tag/unassign</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
@@ -100,12 +100,42 @@
     <servlet-name>Home</servlet-name>
     <url-pattern></url-pattern>
   </servlet-mapping>
+  <filter>
+    <filter-name>UnicodeEnforcer</filter-name>
+    <filter-class>pl.chelm.pwsz.techsupport.web.UnicodeEnforcer</filter-class>
+  </filter>
+  <filter>
+    <filter-name>PolishLocaleEnforcer</filter-name>
+    <filter-class>pl.chelm.pwsz.techsupport.web.PolishLocaleEnforcer</filter-class>
+  </filter>
+  <filter>
+    <filter-name>Authenticator</filter-name>
+    <filter-class>pl.chelm.pwsz.techsupport.web.Authenticator</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>UnicodeEnforcer</filter-name>
+    <url-pattern></url-pattern>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>PolishLocaleEnforcer</filter-name>
+    <url-pattern></url-pattern>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>Authenticator</filter-name>
+    <servlet-name>CommentCreate</servlet-name>
+    <servlet-name>MemberCreate</servlet-name>
+    <servlet-name>IssueCreate</servlet-name>
+    <servlet-name>IssueUpdateTagAssign</servlet-name>
+    <servlet-name>IssueUpdateTagUnassign</servlet-name>
+    <servlet-name>SessionDestroy</servlet-name>
+    <servlet-name>TagCreate</servlet-name>
+  </filter-mapping>
   <jsp-config>
     <jsp-property-group>
-        <url-pattern>*.jsp</url-pattern>
-        <url-pattern>*.html</url-pattern>
-        <url-pattern>*.htm</url-pattern>
-        <page-encoding>UTF-8</page-encoding>
+      <url-pattern>*.jsp</url-pattern>
+      <page-encoding>UTF-8</page-encoding>
     </jsp-property-group>
   </jsp-config>
   <!--

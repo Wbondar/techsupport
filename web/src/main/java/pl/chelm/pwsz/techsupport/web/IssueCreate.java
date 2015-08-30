@@ -16,11 +16,6 @@ extends HttpServlet
 	throws IOException, ServletException
 	{
 		Member author = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
-		if (author == null)
-		{
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Permission denied.");
-			return;
-		}
 		String[] titles   = request.getParameterValues("title");
 		String[] messages = request.getParameterValues("message");
 		int i = 0;

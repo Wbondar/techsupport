@@ -14,6 +14,10 @@ CREATE TABLE member
 )
 ;
 
+/**
+ * User to create another users.
+ * Password: root
+ */
 INSERT INTO member (name, password_hash)
 VALUES ('root', '71C8F54C4C2F526F:1000:3BC4EEB868F92D96A0F9B4FF5B790784EFE157EF')
 ;
@@ -300,7 +304,8 @@ ENDROUTINE
 DELIMITER ;
 
 CREATE VIEW view_issue AS 
-SELECT * FROM issue 
+SELECT issue.id, issue.created_at, issue.issuer_id, issue.title, message.content AS message  
+FROM issue JOIN message ON issue.description_id = message.id 
 ;
 
 CREATE VIEW view_member AS 

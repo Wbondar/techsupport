@@ -1,0 +1,70 @@
+body
+{
+	margin: 0 auto;
+	background-color:lightgreen;
+}
+
+main
+{
+	width:100%;
+	max-width:8in;
+	float:left;
+}
+
+body > *
+{
+	background-color:white;
+	margin: 1% 0 0 1%;
+}
+
+article, section, article section, section article, article article, section section
+{
+	margin: 1% 0 0 1%;
+}
+
+aside
+{
+	width:100%;
+	max-width:4in;
+	float:left;
+}
+
+aside section, aside article
+{
+	background-color: white;
+	color: black;
+}
+
+aside h1, aside h2, aside h3, aside h4, aside h5, aside h6, aside header
+{
+	width: 100%;
+	background-color: green;
+	color: white;
+}
+
+.issue
+{
+	background-color:white;
+}
+
+.comment
+{
+	background-color:white;
+	border: 1px solid gray;
+}
+
+.comment header
+{
+	font-size: small;
+}
+
+.comment footer
+{
+	font-size: small;
+	color: grey;
+}
+
+.tag
+{
+	font-weight:bold;
+}

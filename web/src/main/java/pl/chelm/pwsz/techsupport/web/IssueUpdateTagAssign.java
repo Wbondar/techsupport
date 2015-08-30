@@ -8,7 +8,7 @@ import javax.servlet.http.*;
 import pl.chelm.pwsz.techsupport.domain.*;
 import pl.chelm.pwsz.techsupport.services.*;
 
-public final class IssueUpdateAssignTag
+public final class IssueUpdateTagAssign
 extends HttpServlet
 {
 	@Override
@@ -16,10 +16,6 @@ extends HttpServlet
 	throws IOException, ServletException
 	{
 		Member assigner = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
-		if (assigner == null)
-		{
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Permission denied.");
-		}
 		Identificator<Issue> idOfIssue = new Identificator<Issue> (request.getParameter("issue_id"));
 		Issue issue = Issue.getInstance(idOfIssue);
 		if (issue == null)

@@ -8,7 +8,7 @@ import javax.servlet.http.*;
 import pl.chelm.pwsz.techsupport.domain.*;
 import pl.chelm.pwsz.techsupport.services.*;
 
-public final class IssueUpdateUnassignTag
+public final class IssueUpdateTagUnassign
 extends HttpServlet
 {
 	@Override
@@ -16,11 +16,6 @@ extends HttpServlet
 	throws IOException, ServletException
 	{
 		Member unassigner = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
-		if (unassigner == null)
-		{
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Permission denied.");
-			return;
-		}
 		Identificator<Issue> idOfIssue = new Identificator<Issue> (request.getParameter("issue_id"));
 		Issue issue = Issue.getInstance(idOfIssue);
 		String[] idOfTags = request.getParameterValues("tag_id");

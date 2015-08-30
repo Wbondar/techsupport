@@ -4,17 +4,13 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import javax.servlet.http.*;
-
-import java.util.ResourceBundle;
-import java.util.Locale;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public enum Page
 {
 	  HOME ("/", "/index.jsp")
 	, ISSUE ("/issue", "/views/issue_read.jsp");
-
-	private static final Locale LOCALE = new Locale ("pl");
 
 	private final String path;
 	private final String jsp;
@@ -28,9 +24,6 @@ public enum Page
 	public void redirect (HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException
 	{
-		response.setContentType("text/html;charset=UTF-8");
-		response.setLocale(LOCALE);
-		response.setCharacterEncoding("UTF-8");
 		response.sendRedirect(response.encodeURL(this.rewriteURL(this.path)));
 	}
 
@@ -38,7 +31,7 @@ public enum Page
 
 	public void setParameter (String key, Object value)
 	{
-		this.parameters.put(key, value.toString( ));
+		this.setParameter(key, value.toString( ));
 	}
 
 	public void setParameter (String key, String value)
@@ -65,9 +58,6 @@ public enum Page
 	public void include (HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException
 	{
-		response.setContentType("text/html;charset=UTF-8");
-		response.setLocale(LOCALE);
-		response.setCharacterEncoding("UTF-8");
 		request.getRequestDispatcher(response.encodeURL(this.rewriteURL(this.jsp))).include(request, response);
 	}
 }
