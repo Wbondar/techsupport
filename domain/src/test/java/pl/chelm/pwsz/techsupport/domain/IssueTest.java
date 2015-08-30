@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import pl.chelm.pwsz.techsupport.services.Identificator;
+import pl.chelm.pwsz.techsupport.services.RandomString;
 
 /**
  * Unit test for pl.chelm.pwsz.techsupport.domain.Issue.
@@ -18,15 +19,20 @@ public class IssueTest
      * @param testName name of the test case
      */
 
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "rotten";
+    private static final String USERNAME = RandomString.getInstance(9);
+    private static final String PASSWORD = RandomString.getInstance(36);
 
     public IssueTest( String testName )
     throws Exception
     {
         super( testName );
         Class.forName("com.mysql.jdbc.Driver");
-        this.issuer = Member.getInstance(IssueTest.USERNAME, IssueTest.PASSWORD);
+        Member member = Member.getInstance(IssueTest.USERNAME, IssueTest.PASSWORD);
+        if (member == null)
+        {
+            member = Member.newInstance(IssueTest.USERNAME, IssueTest.PASSWORD);
+        }
+        this.issuer = member;
     }
 
     /**

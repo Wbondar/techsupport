@@ -100,6 +100,14 @@
     <servlet-name>Home</servlet-name>
     <url-pattern></url-pattern>
   </servlet-mapping>
+  <jsp-config>
+    <jsp-property-group>
+        <url-pattern>*.jsp</url-pattern>
+        <url-pattern>*.html</url-pattern>
+        <url-pattern>*.htm</url-pattern>
+        <page-encoding>UTF-8</page-encoding>
+    </jsp-property-group>
+  </jsp-config>
   <!--
     Prevent the visiting of MVC Views from outside the servlet container.
     RequestDispatcher.forward/include should and will still work.

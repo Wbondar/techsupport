@@ -15,6 +15,12 @@ extends HttpServlet
 	public void doPost (HttpServletRequest request, HttpServletResponse response)
 	throws IOException, ServletException
 	{
+		Member author = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
+		if (author == null)
+		{
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Permission denied.");
+			return;
+		}
 		String[] titles = request.getParameterValues("title");
 		int i = 0;
 		boolean success = true;

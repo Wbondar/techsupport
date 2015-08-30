@@ -15,16 +15,16 @@ extends HttpServlet
 	public void doPost (HttpServletRequest request, HttpServletResponse response)
 	throws IOException, ServletException
 	{
+		Member assigner = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
+		if (assigner == null)
+		{
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Permission denied.");
+		}
 		Identificator<Issue> idOfIssue = new Identificator<Issue> (request.getParameter("issue_id"));
 		Issue issue = Issue.getInstance(idOfIssue);
 		if (issue == null)
 		{
 			throw new RuntimeException ("Issue is missing.");
-		}
-		Member assigner = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
-		if (assigner == null)
-		{
-			throw new RuntimeException ("Assigner is missing.");
 		}
 		String[] tagTitles = request.getParameterValues("tag_title");
 		int i = 0;

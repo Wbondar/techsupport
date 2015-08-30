@@ -16,7 +16,15 @@ extends HttpServlet
 	throws IOException, ServletException
 	{
 		String username = request.getParameter("username");
+		if (username == null || username.isEmpty( ))
+		{
+			throw new RuntimeException ("Username is missing.");
+		}
 		String password = request.getParameter("password");
+		if (password == null || password.isEmpty( ))
+		{
+			throw new RuntimeException ("Password is missing.");
+		}
 		Member member = Member.getInstance(username, password);
 		if (member != null)
 		{
@@ -31,7 +39,7 @@ extends HttpServlet
 			response.setStatus(HttpServletResponse.SC_OK);
 			Page.HOME.redirect(request, response);
 		} else {
-			response.sendError(HttpServletResponse.SC_OK);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Wrong username or password.");
 		}
 	}
 }

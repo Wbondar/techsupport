@@ -6,14 +6,15 @@ import javax.servlet.ServletException;
 
 import javax.servlet.http.*;
 
+import java.util.ResourceBundle;
 import java.util.Locale;
 
-enum Page
+public enum Page
 {
 	  HOME ("/", "/index.jsp")
 	, ISSUE ("/issue", "/views/issue_read.jsp");
 
-	private static final Locale locale = new Locale ("pl_PL");
+	private static final Locale LOCALE = new Locale ("pl");
 
 	private final String path;
 	private final String jsp;
@@ -27,7 +28,9 @@ enum Page
 	public void redirect (HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException
 	{
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
+		response.setLocale(LOCALE);
+		response.setCharacterEncoding("UTF-8");
 		response.sendRedirect(response.encodeURL(this.rewriteURL(this.path)));
 	}
 
@@ -62,7 +65,9 @@ enum Page
 	public void include (HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException
 	{
-		response.setContentType("text/html");
+		response.setContentType("text/html;charset=UTF-8");
+		response.setLocale(LOCALE);
+		response.setCharacterEncoding("UTF-8");
 		request.getRequestDispatcher(response.encodeURL(this.rewriteURL(this.jsp))).include(request, response);
 	}
 }

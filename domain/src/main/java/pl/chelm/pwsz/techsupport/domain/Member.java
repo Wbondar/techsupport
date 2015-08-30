@@ -39,16 +39,27 @@ implements Identifiable<Member>
 		return datasource.create(name, password);
 	}
 
-	private static Member newInstance (String name, String password)
+	public static Member newInstance (String name, String password)
 	{
-		Member member = null;
-		try
+		long id = Member.writeToDatabase(name, password);
+		if (id < 1)
 		{
-			long id = Member.writeToDatabase(name, password);
-			member = new Member (id, name);
-			Member.cache(member);
-		} catch (Exception e) {
 			return null;
+		}
+		Member member = new Member (id, name);
+		Member.cache(member);
+		return member;
+	}
+
+	private static Member getInstance (Data data)
+	{
+		Identificator<Member> id = new Identificator<Member> (data.<Long>get(Long.class, "id"));
+		Member member = Member.readFromCache(id);
+		if (member == null)
+		{
+			String name = data.<String>get(String.class, "name");
+			member = new Member (id, name);
+			Member.cache(member);			
 		}
 		return member;
 	}
@@ -56,18 +67,11 @@ implements Identifiable<Member>
 	public static Member getInstance (String name, String password)
 	{
 		Data data = Member.readFromDatabase(name, password);
-		if (data != null)
+		if (data == null)
 		{
-			Identificator<Member> id = new Identificator<Member> (data.<Long>get(Long.class, "id"));
-			Member member = Member.readFromCache(id);
-			if (member == null)
-			{
-				member = new Member (id, name);
-				Member.cache(member);
-			}
-			return member;
+			return null;
 		}
-		return Member.newInstance(name, password);
+		return Member.getInstance(data);
 	}
 	
 	public static Member getInstance (Identificator<Member> id)
@@ -80,8 +84,7 @@ implements Identifiable<Member>
 			{
 				return null;
 			}
-			member = new Member (id, data.<String>get(String.class, "name"));
-			Member.cache(member);
+			member = Member.getInstance(data);
 		}
 		return member;
 	}

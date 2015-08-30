@@ -15,9 +15,14 @@ extends HttpServlet
 	public void doPost (HttpServletRequest request, HttpServletResponse response)
 	throws IOException, ServletException
 	{
+		Member unassigner = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
+		if (unassigner == null)
+		{
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Permission denied.");
+			return;
+		}
 		Identificator<Issue> idOfIssue = new Identificator<Issue> (request.getParameter("issue_id"));
 		Issue issue = Issue.getInstance(idOfIssue);
-		Member unassigner = (Member)request.getSession(false).getAttribute(Member.class.toString( ));
 		String[] idOfTags = request.getParameterValues("tag_id");
 		int i = 0;
 		boolean success = true;

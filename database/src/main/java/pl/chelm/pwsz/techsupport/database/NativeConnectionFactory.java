@@ -4,22 +4,25 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 
+import java.util.ResourceBundle;
+
 enum NativeConnectionFactory
 implements ConnectionFactory
 {
-	/* TODO: Provide proper resource for database credentials handling. */
+	/* TODO: Ensure that database credentials are properly protected. */
 	
-	INSTANCE ("jdbc:mysql://localhost:3306/techsupport", "root", "root");
+	INSTANCE ( );
 
 	private final String dbURL;
 	private final String username;
 	private final String password;
 
-	private NativeConnectionFactory (String dbURL, String username, String password)
+	private NativeConnectionFactory ( )
 	{
-		this.dbURL    = dbURL;
-		this.username = username;
-		this.password = password;
+		ResourceBundle resourceBundle = ResourceBundle.getBundle("DatabaseCredentials");
+		this.username = resourceBundle.getString("USERNAME");
+		this.password = resourceBundle.getString("PASSWORD");
+		this.dbURL    = "jdbc:mysql://" + resourceBundle.getString("HOST") + ":" + resourceBundle.getString("PORT") + "/" + resourceBundle.getString("DATABASE");
         try
         {
             Class.forName("com.mysql.jdbc.Driver");

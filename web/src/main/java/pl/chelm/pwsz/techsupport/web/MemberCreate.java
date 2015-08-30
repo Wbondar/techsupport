@@ -16,6 +16,12 @@ extends HttpServlet
 	public void doPost (HttpServletRequest request, HttpServletResponse response)
 	throws IOException, ServletException
 	{
+		Member author = (Member)request.getSession( ).getAttribute(Member.class.toString( ));
+		if (author == null)
+		{
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Permission denied.");
+			return;
+		}
 		String[] usernames = request.getParameterValues("username");
 		String[] passwords = request.getParameterValues("password");
 		if (usernames.length < passwords.length || usernames.length <= 0)
@@ -30,8 +36,8 @@ extends HttpServlet
 		boolean success = true;
 		for (i = 0; i < usernames.length; i++)
 		{
-			Member member = Member.getInstance(usernames[i], passwords[i]);
-			success = member.getName( ).equals(usernames[i]) && success;
+			Member member = Member.newInstance(usernames[i], passwords[i]);
+			success = (member != null) && success;
 		}
 		if (success)
 		{
