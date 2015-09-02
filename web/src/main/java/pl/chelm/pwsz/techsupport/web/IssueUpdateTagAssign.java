@@ -28,8 +28,17 @@ extends HttpServlet
 		for (i = 0; i < tagTitles.length; i++)
 		{
 			Tag tag = Tag.getInstance(tagTitles[i]);
-			issue = issue.assignTag(assigner, tag);
-			success = issue.containsTag(tag) && success;
+			if (tag == null)
+			{
+				tag = Tag.newInstance(tagTitles[i]);
+			}
+			if (tag != null)
+			{
+				issue = issue.assignTag(assigner, tag);
+				success = issue.containsTag(tag) && success;
+			} else {
+				success = false;
+			}
 		}
 		if (success)
 		{

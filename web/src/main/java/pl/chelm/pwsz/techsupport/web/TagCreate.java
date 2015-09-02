@@ -27,6 +27,10 @@ extends HttpServlet
 		for (i = 0; i < titles.length; i++)
 		{
 			Tag tag = Tag.getInstance(titles[i]);
+			if (tag == null)
+			{
+				tag = Tag.newInstance(titles[i]);
+			}
 			success = (tag != null) && success;
 		}
 		if (success)

@@ -37,7 +37,7 @@ implements Identifiable<Tag>
 		return datasource.read(id.longValue( ));
 	}
 
-	private static Tag newInstance (String title)
+	public static Tag newInstance (String title)
 	{
 		long idValue = Tag.writeToDatabase(title);
 		Identificator<Tag> id = new Identificator<Tag> (idValue);

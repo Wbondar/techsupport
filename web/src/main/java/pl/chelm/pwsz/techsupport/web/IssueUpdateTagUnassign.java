@@ -25,8 +25,13 @@ extends HttpServlet
 		{
 			Identificator<Tag> idOfTag = new Identificator<Tag> (idOfTags[i]);
 			Tag tag = Tag.getInstance(idOfTag);
-			issue = issue.unassignTag(unassigner, tag);
-			success = !issue.containsTag(tag) && success;
+			if (tag != null)
+			{
+				issue = issue.unassignTag(unassigner, tag);
+				success = (!issue.containsTag(tag)) && success;
+			} else {
+				success = true && success;
+			}
 		}
 		if (success)
 		{
