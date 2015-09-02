@@ -52,15 +52,7 @@ implements Identifiable<Tag>
 		Data data = Tag.readFromDatabase(title);
 		if (data != null)
 		{
-			Identificator<Tag> id = new Identificator<Tag> (data.<Long>get(Long.class, "id"));
-			tag = Tag.readFromCache(id);
-			if (tag == null)
-			{
-				tag = new Tag (id, title);
-				Tag.cache(tag);
-			}
-		} else {
-			tag = Tag.newInstance(title);
+			tag = Tag.getInstance(data);
 		}
 		return tag;
 	}

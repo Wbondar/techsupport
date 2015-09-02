@@ -79,6 +79,8 @@ extends Number
 		return false;
 	}
 
+	/* TODO: Override hashCode method properly. */
+
 	@Override
 	public int hashCode ( )
 	{

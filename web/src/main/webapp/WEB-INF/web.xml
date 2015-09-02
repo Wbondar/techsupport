@@ -19,8 +19,12 @@
   	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueCreate</servlet-class>
   </servlet>
   <servlet>
-  	<servlet-name>IssueRead</servlet-name>
-  	<servlet-class>pl.chelm.pwsz.techsupport.web.IssueRead</servlet-class>
+    <servlet-name>IssueRead</servlet-name>
+    <servlet-class>pl.chelm.pwsz.techsupport.web.IssueRead</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>IssueSearch</servlet-name>
+    <servlet-class>pl.chelm.pwsz.techsupport.web.IssueSearch</servlet-class>
   </servlet>
   <servlet>
   	<servlet-name>IssueUpdateTagAssign</servlet-name>
@@ -71,6 +75,10 @@
   <servlet-mapping>
     <servlet-name>IssueRead</servlet-name>
     <url-pattern>/issue</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>IssueSearch</servlet-name>
+    <url-pattern>/issues</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>IssueUpdateTagAssign</servlet-name>

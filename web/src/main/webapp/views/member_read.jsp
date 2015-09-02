@@ -1,4 +1,5 @@
 <%@ page import="pl.chelm.pwsz.techsupport.domain.Member" %>
+<%@ page import="pl.chelm.pwsz.techsupport.services.StringEscapeUtils" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +11,7 @@
 	    <%
 	    	Member member = (Member)request.getAttribute(Member.class.toString( ));
 	    %>
-      <h1><%= member.getName( ) %></h1>
+      <h1><%= StringEscapeUtils.escapeHtml4(member.getName( )) %></h1>
     </article>
   </main>
 </body>

@@ -63,6 +63,17 @@ implements Datasource
 		}
 	}
 
+	public Collection<Data> read (String query)
+	{
+		try
+		{
+			PreparedStatement statement = this.prepareStatement (query);
+			return DataFactory.getAllRows(statement.executeQuery( ));
+		} catch (SQLException e) {
+			throw new DatasourceException ("Failed to fetch issues from the database.", e);
+		}
+	}
+
 	public void updateTag (long idOfIssue, long idOfMember, long idOfTag, boolean isAssigned)
 	{
 		if (isAssigned)

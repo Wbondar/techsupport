@@ -4,6 +4,7 @@
 <%@ page import="java.util.Locale" %>
 <%@ page import="pl.chelm.pwsz.techsupport.domain.Member" %>
 <%@ page import="pl.chelm.pwsz.techsupport.domain.Issue" %>
+<%@ page import="pl.chelm.pwsz.techsupport.services.StringEscapeUtils" %>
 <%
   Member member = (Member)session.getAttribute(Member.class.toString( ));
   ResourceBundle labels = ResourceBundle.getBundle("LabelsLocalization", response.getLocale( ));
@@ -31,7 +32,7 @@
             {
               stringBuilder.append("<li>");
               stringBuilder.append(labels.getString("ISSUE_ID") + issue.getId( ) + ": ");
-              stringBuilder.append("<a href='" + response.encodeURL("/issue?id=" + issue.getId( )) + "'>" + issue.getTitle( ) + "</a>");
+              stringBuilder.append("<a href='" + response.encodeURL("/issue?id=" + issue.getId( )) + "'>" + StringEscapeUtils.escapeHtml4(issue.getTitle( )) + "</a>");
               stringBuilder.append("</li>");
             }
             stringBuilder.append("</ul>");

@@ -6,6 +6,7 @@
 <%@ page import="pl.chelm.pwsz.techsupport.domain.Comment" %>
 <%@ page import="pl.chelm.pwsz.techsupport.domain.Issue" %>
 <%@ page import="pl.chelm.pwsz.techsupport.domain.Tag" %>
+<%@ page import="pl.chelm.pwsz.techsupport.services.StringEscapeUtils" %>
 <%
   Issue issue = (Issue)request.getAttribute(Issue.class.toString( ));
   if (issue == null)
@@ -25,14 +26,14 @@
   <main>
     <article class='issue'>
       <header>
-        <h1><%= labels.getString("ISSUE_TITLE")%> #<%= issue.getId( ) %>: <%= issue.getTitle( ) %></h1>
+        <h1><%= labels.getString("ISSUE_TITLE")%> #<%= issue.getId( ) %>: <%= StringEscapeUtils.escapeHtml4(issue.getTitle( )) %></h1>
       </header>
       <footer>
-        <p><%= issue.getIssuer( ).getName( ) %></p>
+        <p><%= StringEscapeUtils.escapeHtml4(issue.getIssuer( ).getName( )) %></p>
       </footer>
       <section class='description'>
         <h2><%= labels.getString("ISSUE_DESCRIPTION") %></h2>
-        <p><%= issue.getMessage( ) %></p>
+        <p><%= StringEscapeUtils.escapeHtml4(issue.getMessage( )) %></p>
       </section>
       <section class='tags'>
         <h2><%= headers.getString("TAGS") %></h2>
@@ -46,8 +47,8 @@
             {
               stringBuilder.append("<li>");
               stringBuilder.append("<section class='tag'>");
-              stringBuilder.append("<h3>" + tag.getTitle( ) + "</h3>");
-              stringBuilder.append("<form name='" + tag.getTitle( ).toLowerCase( ).replaceAll("\\s+","") + "_unassign' method='POST' action='/issue/update/tag/unassign'>");
+              stringBuilder.append("<h3>" + StringEscapeUtils.escapeHtml4(tag.getTitle( )) + "</h3>");
+              stringBuilder.append("<form name='" + StringEscapeUtils.escapeHtml4(tag.getTitle( )).toLowerCase( ).replaceAll("\\s+","") + "_unassign' method='POST' action='/issue/update/tag/unassign'>");
               stringBuilder.append("<input type='hidden' name='issue_id' value='" + issue.getId( ) + "' required />");
               stringBuilder.append("<input type='hidden' name='tag_id' value='" + tag.getId( ) + "' required />");
               stringBuilder.append("<input type='submit' />");
@@ -74,10 +75,10 @@
               stringBuilder.append("<header>");
                 stringBuilder.append("<h3>" + labels.getString("COMMENT_ID") + comment.getId( ) + ".</h3>");
               stringBuilder.append("</header>");
-              stringBuilder.append(comment.getContent( ));
+              stringBuilder.append(StringEscapeUtils.escapeHtml4(comment.getContent( )));
               stringBuilder.append("<footer>");
                 stringBuilder.append("<p>" + commentDateFormat.format(comment.getDatePosted( )) + "</p>");
-                stringBuilder.append("<p>" + comment.getAuthor( ).getName( ) + "</p>");
+                stringBuilder.append("<p>" + StringEscapeUtils.escapeHtml4(comment.getAuthor( ).getName( )) + "</p>");
               stringBuilder.append("</footer>");
             stringBuilder.append("</article>");
           }

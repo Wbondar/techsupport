@@ -52,6 +52,18 @@ implements Datasource
 		}
 	}
 
+	public Data read (String name)
+	{
+		try
+		{
+			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_member WHERE LOWER(name) = LOWER(?) LIMIT 1;");
+			statement.setString(1, name);
+			return DataFactory.getFirstRow(statement.executeQuery( ));
+		} catch (SQLException e) {
+			throw new DatasourceException ("Failed to fetch a member from the database by their's name.", e);
+		}
+	}
+
 	public Data read (String name, String password)
 	{
 		try

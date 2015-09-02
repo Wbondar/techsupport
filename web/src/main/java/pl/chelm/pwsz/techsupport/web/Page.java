@@ -10,7 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 public enum Page
 {
 	  HOME ("/", "/index.jsp")
-	, ISSUE ("/issue", "/views/issue_read.jsp");
+	, ISSUE ("/issue", "/views/issue_read.jsp")
+	, ISSUES ("/issues", "/views/issues.jsp");
 
 	private final String path;
 	private final String jsp;
@@ -47,7 +48,11 @@ public enum Page
 			targetURL.append("?");
 			for (String key : this.parameters.keySet( ))
 			{
-				targetURL.append(key + "=" + this.parameters.get(key) + "&");
+				String value = this.parameters.get(key);
+				if (value != null && !value.isEmpty( ))
+				{
+					targetURL.append(key + "=" + value + "&");
+				}
 			}
 			targetURL.delete(targetURL.length( ) - 1, targetURL.length( ));
 			this.parameters.clear( );

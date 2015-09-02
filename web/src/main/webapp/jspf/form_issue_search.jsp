@@ -1,30 +1,24 @@
 <section>
 	<h2><%= headers.getString("ISSUE_SEARCH") %></h2>
-	<form name='issue_search_by_title' action='/issue' method='GET' >
+	<form name='issue_search' action='/issues' method='GET' >
 		<fieldset>
 			<legend><%= labels.getString("SEARCH_BY_TITLE") %></legend>
 			<label>
 				<%= labels.getString("ISSUE_TITLE") %>
-				<input type='text' name='issue_title' />
+				<input type='text' name='mentionings' />
 			</label>
 		</fieldset>
-		<input type='submit' />
-	</form>
-	<form name='issue_search_by_date' action='/issue' method='GET' >
 		<fieldset>
 			<legend><%= labels.getString("SEARCH_BY_DATE") %></legend>
 			<label>
 				<%= labels.getString("ISSUE_DATE_ISSUED_AFTER") %>
-				<input type='date' name='after' />
+				<input type='date' name='after' placeholder='rrrr-mm-dd' />
 			</label>
 			<label>
 				<%= labels.getString("ISSUE_DATE_ISSUED_BEFORE") %>
-				<input type='date' name='before' />
+				<input type='date' name='before' placeholder='rrrr-mm-dd' />
 			</label>
 		</fieldset>
-		<input type='submit' />
-	</form>
-	<form name='issue_search_by_tag' action='/issue' method='GET' >
 		<fieldset>
 			<legend><%= labels.getString("SEARCH_BY_TAG") %></legend>
 			<label>
@@ -32,9 +26,6 @@
 				<input type='text' name='tag_title' />
 			</label>
 		</fieldset>
-		<input type='submit' />
-	</form>
-	<form name='issue_search_by_issuer' action='/issue' method='GET'>
 		<fieldset>
 			<legend><%= labels.getString("SEARCH_BY_USERNAME") %></legend>
 			<label>

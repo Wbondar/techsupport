@@ -64,6 +64,22 @@ implements Identifiable<Member>
 		return member;
 	}
 
+	private static Data readFromDatabase (String name)
+	{
+		MemberDatasource datasource = DatasourceFactory.<MemberDatasource>getInstance(MemberDatasource.class);
+		return datasource.read(name);
+	}
+
+	public static Member getInstance (String name)
+	{
+		Data data = Member.readFromDatabase(name);
+		if (data == null)
+		{
+			return null;
+		}
+		return Member.getInstance(data);
+	}
+
 	public static Member getInstance (String name, String password)
 	{
 		Data data = Member.readFromDatabase(name, password);
