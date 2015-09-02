@@ -6,6 +6,7 @@
 	<link rel='stylesheet' type='text/css' href='./css/layout.css' />
 </head>
 <body>
+	<%@ include file="/jspf/nav.jsp" %>
   <main>
     <article>
 	    <%

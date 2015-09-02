@@ -16,6 +16,7 @@
   <link rel='stylesheet' type='text/css' href='<%= request.getServletContext( ).getContextPath() %>/css/layout.css' />
 </head>
 <body>
+  <%@ include file="/jspf/nav.jsp" %>
   <main>
     <h1>The State School of Higher Education in Chelm: Techsupport service.</h1>
     <section>
@@ -44,46 +45,10 @@
   </main>
   <aside>
     <%@ include file="/jspf/form_issue_search.jsp" %>
-    <%
-      if (member != null)
-      {
-        StringBuilder stringBuilder = new StringBuilder ( );
-        stringBuilder.append("<section>");
-          stringBuilder.append("<h2>" + headers.getString("ISSUE_CREATE") + "</h2>");
-          stringBuilder.append("<form name='issue_create' action='/issue/create' method='POST' >");
-              stringBuilder.append("<input type='text' name='title' />");
-              stringBuilder.append("<textarea name='message' cols='30' rows='6'></textarea>");
-              stringBuilder.append("<input type='submit' />");
-          stringBuilder.append("</form>");
-        stringBuilder.append("</section>");
-        stringBuilder.append("<section>");  
-          stringBuilder.append("<h2>" + headers.getString("MEMBER_CREATE") + "</h2>");  
-          stringBuilder.append("<form name='sign_up' action='/member/create' method='POST' >"); 
-              stringBuilder.append("<input type='text' name='username' />");  
-              stringBuilder.append("<input type='password' name='password' />");  
-              stringBuilder.append("<input type='submit' />");  
-          stringBuilder.append("</form>");  
-        stringBuilder.append("</section>"); 
-        stringBuilder.append("<section>");
-          stringBuilder.append("<h2>" + headers.getString("EXIT") + "</h2>");
-          stringBuilder.append("<form name='exit' action='/session/destroy' method='POST' >");
-              stringBuilder.append("<input type='submit' />");
-          stringBuilder.append("</form>");
-        stringBuilder.append("</section>");
-        out.println(stringBuilder);
-      } else {
-        StringBuilder stringBuilder = new StringBuilder ( );
-        stringBuilder.append("<section>");  
-          stringBuilder.append("<h2>" + headers.getString("LOG_IN") + "</h2>"); 
-          stringBuilder.append("<form name='log_in' action='/session/create' method='POST' >"); 
-              stringBuilder.append("<input type='text' name='username' />");  
-              stringBuilder.append("<input type='password' name='password' />");  
-              stringBuilder.append("<input type='submit' />");  
-          stringBuilder.append("</form>");  
-        stringBuilder.append("</section>"); 
-        out.println(stringBuilder);
-      } 
-    %>
+    <%@ include file="/jspf/form_issue_create.jsp" %>
+    <%@ include file="/jspf/form_log_in.jsp" %>
+    <%@ include file="/jspf/form_member_create.jsp" %>
+    <%@ include file="/jspf/form_session_destroy.jsp" %>
   </aside>
 </body>
 </html>

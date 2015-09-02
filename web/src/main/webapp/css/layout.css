@@ -4,6 +4,15 @@ body
 	background-color:lightgreen;
 }
 
+nav a
+{
+	background-color: orange;
+	color: white;
+	font-weight: bold;
+	text-decoration:none;
+	text-align: center;
+}
+
 main
 {
 	width:100%;
@@ -17,7 +26,7 @@ body > *
 	margin: 1% 0 0 1%;
 }
 
-article, section, article section, section article, article article, section section
+nav, article, section, article section, section article, article article, section section
 {
 	margin: 1% 0 0 1%;
 }

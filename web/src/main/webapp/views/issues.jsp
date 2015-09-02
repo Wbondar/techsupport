@@ -8,6 +8,7 @@
   <link rel='stylesheet' type='text/css' href='<%= request.getServletContext( ).getContextPath( ) %>/css/layout.css' />
 </head>
 <body>
+	<%@ include file="/jspf/nav.jsp" %>
 	<main>
 		<h1><%= ResourceBundle.getBundle("HeadersLocalization", response.getLocale( )).getString("ISSUES_FOUND") %></h1>
 		<%
@@ -25,5 +26,12 @@
 			}
 		%>
 	</main>
+	<aside>
+		<%@ include file="/jspf/form_issue_search.jsp" %>
+		<%@ include file="/jspf/form_issue_create.jsp" %>
+		<%@ include file="/jspf/form_log_in.jsp" %>
+		<%@ include file="/jspf/form_member_create.jsp" %>
+		<%@ include file="/jspf/form_session_destroy.jsp" %>
+	</aside>
 </body>
 </html>
