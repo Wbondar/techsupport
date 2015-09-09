@@ -7,4 +7,7 @@ package pl.chelm.pwsz.techsupport.database;
  * but the unsigned has a full 4G positive range.
  */
 
-interface Datasource {}
+interface Datasource 
+{
+	public abstract Data read (long id);
+}
