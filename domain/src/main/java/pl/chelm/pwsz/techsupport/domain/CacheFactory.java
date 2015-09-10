@@ -1,13 +1,17 @@
 package pl.chelm.pwsz.techsupport.domain;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.HashMap;
+
 import pl.chelm.pwsz.techsupport.database.*;
 import pl.chelm.pwsz.techsupport.services.*;
 
-abstract class CacheFactory<T, D extends Object & Datasoruce>
+abstract class CacheFactory<T extends Identifiable<T>, D extends Datasource>
 extends Object
-implements Factory<T extends Object & Identifiable<T>>
+implements Factory<T>
 {
-	private final Class<T> type;
+	private final Class<T> typeOfEntitiesToBeProduced;
 
 	CacheFactory (Class<T> typeOfEntitiesToBeProduced, Class<D> typeOfDefaultDatasource)
 	{
@@ -17,7 +21,7 @@ implements Factory<T extends Object & Identifiable<T>>
 
 	private final Cache<T> getCache ( )
 	{
-		return CacheFactory.<T>getInstance(this.typeOfEntitiesToBeProduced);
+		return pl.chelm.pwsz.techsupport.services.CacheFactory.<T>getInstance(this.typeOfEntitiesToBeProduced);
 	}
 
 	protected final void cache (T objectToCache) 
@@ -30,7 +34,7 @@ implements Factory<T extends Object & Identifiable<T>>
 		return this.getCache( ).get(id);
 	}
 
-	protected final <S extends Object & Datasource> S getDatasoutrce (Class<S> typeOfDatasource)
+	protected final <S extends Object & Datasource> S getDatasource (Class<S> typeOfDatasource)
 	{
 		return DatasourceFactory.<S>getInstance(typeOfDatasource);
 	}

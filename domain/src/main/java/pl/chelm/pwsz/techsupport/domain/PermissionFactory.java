@@ -18,39 +18,74 @@ extends CacheFactory<Permission, PermissionDatasource>
 		this(Permission.class, PermissionDatasource.class);
 	}
 
-	private void writePermissionGrantingToDatabase (Identificator<Member> idOfAssigner, Identificator<Member> idOfAssignee, Identificator<Member> idOfPermission)
+	private Data writePermissionGrantingToDatabase (Identificator<Member> idOfAssigner, Identificator<Member> idOfAssignee, Identificator<Action> idOfAction)
 	{
 		PermissionDatasource datasource = this.getDefaultDatasource( );
-		datasource.grantPermission(ifOfAssigner.longValue( ), idOfAssignee.longValue( ), idOfPermission.longValue( ));
+		return datasource.grantPermission(idOfAssigner.longValue( ), idOfAssignee.longValue( ), idOfAction.longValue( ));
 	}
 
-	private void writePermissionRevokingToDatabase (Identificator<Member> idOfAssigner, Identificator<Member> idOfAssignee, Identificator<Member> idOfPermission)
+	private Data writePermissionRevokingToDatabase (Identificator<Member> idOfAssigner, Identificator<Member> idOfAssignee, Identificator<Action> idOfAction)
 	{
 		PermissionDatasource datasource = this.getDefaultDatasource( );
-		datasource.revokePermission(ifOfAssigner.longValue( ), idOfAssignee.longValue( ), idOfPermission.longValue( ));
+		return datasource.revokePermission(idOfAssigner.longValue( ), idOfAssignee.longValue( ), idOfAction.longValue( ));
 	}
 
-	public Permission newInstance (Member grantor, Member grantee, Permission actionToGrant)
+	public Permission newInstance (Member grantor, Member grantee, Action actionToGrant)
 	throws AccessRestrictedException
 	{
-		if (!grantor.isPermitted(Action.getInstance("GRANT_PERMISSION")))
+		if (!grantor.isPermited(Action.getInstance("GRANT_PERMISSION")))
 		{
 			throw new AccessRestrictedException (grantor, Action.getInstance("GRANT_PERMISSION"));
 		}
-		if (!grantor.isPermitted(actionToGrant))
+		if (!grantor.isPermited(actionToGrant))
 		{
 			/*
 			 * One can't grant action one doesn't have.
 			 */ 
 			throw new AccessRestrictedException (grantor, actionToGrant);
 		}
-		try
+		Data data =  this.writePermissionGrantingToDatabase(grantor.getId( ), grantee.getId( ), actionToGrant.getId( ));
+		if (data == null)
 		{
-			this.writePermissionGrantingToDatabase(grantor.getId( ), asignee.getId( ), action.getId( ));
-		} catch (DatasourceException e) {
-			throw e;
+			return null;
 		}
-		return new Permission (grantor, grantee, actionToGrant, new Date ( ), true);
+		Long idValue = data.<Long>get(Long.class, "id");
+		Identificator<Permission> id = new Identificator<Permission> (idValue);
+		Date since = data.<Date>get(Date.class, "since");
+		Boolean valid = data.<Boolean>get(Boolean.class, "valid");
+		return new Permission (id, grantor, grantee, actionToGrant, since, valid);
+	}
+
+	public RevokedPermission newRevokedInstance (Member revoker, Permission permissionToRevoke)
+	throws AccessRestrictedException
+	{
+		if (!revoker.isPermited(Action.getInstance("REVOKE_PERMISSION")))
+		{
+			throw new AccessRestrictedException (revoker, Action.getInstance("REVOKE_PERMISSION"));
+		}
+		if (!revoker.isPermited(permissionToRevoke.getAction( )))
+		{
+			/*
+			 * One can't revoke action one doesn't have.
+			 */ 
+			throw new AccessRestrictedException (revoker, permissionToRevoke.getAction( ));
+		}
+		if (!permissionToRevoke.isValid( ))
+		{
+			if (permissionToRevoke instanceof RevokedPermission)
+			{
+				return (RevokedPermission)permissionToRevoke;
+			} else {
+				return new RevokedPermission (revoker, permissionToRevoke, new Date ( ));
+			}
+		}
+		Data data =  this.writePermissionRevokingToDatabase(revoker.getId( ), permissionToRevoke.getGrantee( ).getId( ), permissionToRevoke.getAction( ).getId( ));
+		if (data == null)
+		{
+			return null;
+		}
+		Date until = data.<Date>get(Date.class, "until");
+		return new RevokedPermission (revoker, permissionToRevoke, until);
 	}
 
 	private Data readFromDatabase (Identificator<Member> idOfGrantee, Identificator<Action> idOfAction)
@@ -70,7 +105,7 @@ extends CacheFactory<Permission, PermissionDatasource>
 		Member grantee = Member.getInstance(idOfGrantee);
 		Date since = data.<Date>get(Date.class, "since");
 		Boolean valid = data.<Boolean>get(Boolean.class, "valid");
-		Permission permission = new Permission (id, granter, grantee, action, valid);
+		Permission permission = new Permission (id, granter, grantee, action, since, valid);
 		if (!valid)
 		{
 			Identificator<Member> idOfRevoker = new Identificator<Member> (data.<Long>get(Long.class, "revoker_id"));

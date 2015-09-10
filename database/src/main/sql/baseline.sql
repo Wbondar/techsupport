@@ -127,13 +127,13 @@ CREATE TABLE tag_assignation
 
 CREATE TABLE tag_unassignation
 (
-      id            INTEGER UNSIGNED  NOT NULL AUTO_INCREMENT
+      id            INTEGER UNSIGNED NOT NULL AUTO_INCREMENT
     , unassigner_id INTEGER UNSIGNED NOT NULL
-    , issue_id      INTEGER UNSIGNED  NOT NULL
+    , issue_id      INTEGER UNSIGNED NOT NULL
     , tag_id        INTEGER UNSIGNED NOT NULL
-    , unassigned_at TIMESTAMP         NOT NULL
+    , unassigned_at TIMESTAMP        NOT NULL
     , PRIMARY KEY (id)
-    /*
+    /**
      * Composed foreign key ensures that one cant' unassign tag, 
      * that was never assigned.
      */
@@ -141,6 +141,65 @@ CREATE TABLE tag_unassignation
         ON DELETE RESTRICT
         ON UPDATE RESTRICT
     , UNIQUE KEY (unassigner_id, issue_id, tag_id, unassigned_at)
+)
+;
+
+CREATE TABLE action 
+(
+      id         INTEGER UNSIGNED NOT NULL AUTO_INCREMENT
+    , label      VARCHAR(100)     NOT NULL
+    , created_at TIMESTAMP        NOT NULL 
+    , PRIMARY KEY (id)
+    , UNIQUE KEY (label)
+)
+;
+
+CREATE TABLE permission
+(
+      id         INTEGER UNSIGNED NOT NULL AUTO_INCREMENT
+    , grantor_id INTEGER UNSIGNED NOT NULL
+    , grantee_id INTEGER UNSIGNED NOT NULL
+    , action_id  INTEGER UNSIGNED NOT NULL
+    , granted_at TIMESTAMP        NOT NULL
+    , PRIMARY KEY (id)
+    , FOREIGN KEY (grantor_id) REFERENCES member (id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT
+    , FOREIGN KEY (grantee_id) REFERENCES member (id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT
+    , FOREIGN KEY (action_id) REFERENCES action (id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT
+    /**
+     * The following unique key is applied in order to avoid
+     * granting permission to perform the same action
+     * multiple times by different grantors.
+     */
+    , UNIQUE KEY (grantee_id, action_id, granted_at)
+    /**
+     * One cannot grant the same action to the same grantee at the same time.
+     */
+    , UNIQUE KEY (grantor_id, grantee_id, action_id, granted_at)
+)
+;
+
+CREATE TABLE permission_revocation
+(
+      permission_id INTEGER UNSIGNED NOT NULL
+    , revoker_id    INTEGER UNSIGNED NOT NULL
+    , revoked_at    TIMESTAMP        NOT NULL
+    /**
+     * The same permission can not be revoked multiple times.
+     * In order to renew permission, one has to grant it all other again.
+     */
+    , PRIMARY KEY (permission_id)
+    , FOREIGN KEY (permission_id) REFERENCES permission (id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT
+    , FOREIGN KEY (revoker_id) REFERENCES member (id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT
 )
 ;
 
@@ -295,6 +354,59 @@ END
 ENDROUTINE
 DELIMITER ;
 
+DELIMITER ENDROUTINE
+CREATE PROCEDURE action_create
+(
+      IN  arg_label  VARCHAR (100)
+    , OUT arg_action_id INTEGER UNSIGNED 
+)
+BEGIN
+    INSERT INTO action (label, created_at)
+    VALUES (arg_label, NOW( ))
+    ;
+    SELECT LAST_INSERT_ID( ) INTO arg_action_id 
+    ;
+END 
+ENDROUTINE
+DELIMITER ;
+
+DELIMITER ENDROUTINE
+CREATE PROCEDURE member_update_permission_grant
+(
+      IN  arg_grantor_id    INTEGER UNSIGNED
+    , IN  arg_grantee_id    INTEGER UNSIGNED 
+    , IN  arg_action_id     INTEGER UNSIGNED 
+    , OUT arg_permission_id INTEGER UNSIGNED
+    , OUT arg_granted_at    TIMESTAMP
+    , OUT arg_valid         BOOLEAN
+)
+BEGIN
+    INSERT INTO permission (grantor_id, grantee_id, action_id, granted_at) 
+    VALUES (arg_grantor_id, arg_grantee_id, arg_action_id, NOW( ))
+    ;
+    SELECT LAST_INSERT_ID( ), NOW( ), TRUE INTO arg_permission_id, arg_granted_at, arg_valid
+    ;
+END 
+ENDROUTINE
+DELIMITER ;
+
+DELIMITER ENDROUTINE
+CREATE PROCEDURE member_update_permission_revoke
+(
+      IN  arg_revoker_id    INTEGER UNSIGNED
+    , IN  arg_permission_id INTEGER UNSIGNED 
+    , OUT arg_revoked_at    TIMESTAMP 
+)
+BEGIN
+    INSERT INTO permission_revocation (revoker_id, permission_id, revoked_at)
+    VALUES (arg_revoker_id, arg_permission_id, NOW( ))
+    ;
+    SELECT NOW( ) INTO arg_revoked_at
+    ; 
+END 
+ENDROUTINE
+DELIMITER ;
+
 CREATE VIEW view_issue AS 
 SELECT issue.id, issue.created_at, issue.issuer_id, issue.title, message.content AS message  
 FROM issue JOIN message ON issue.description_id = message.id 
@@ -316,6 +428,31 @@ FROM tag_usage JOIN view_tag ON tag_usage.tag_id = view_tag.id
 CREATE VIEW view_comment AS 
 SELECT comment.issue_id, message.* 
 FROM comment JOIN message ON comment.message_id = message.id
+;
+
+CREATE VIEW view_action AS 
+SELECT *
+FROM action
+;
+
+DROP VIEW view_permission
+;
+CREATE VIEW view_permission AS 
+SELECT 
+      p.id AS id 
+    , p.grantor_id
+    , p.grantee_id 
+    , p.action_id 
+    , p.granted_at AS since
+    , r.revoked_at AS until
+    , r.revoker_id 
+    , r.revoker_id IS NULL AS valid
+FROM permission AS p 
+LEFT JOIN permission_revocation AS r ON p.id = r.permission_id 
+WHERE granted_at >= (SELECT MAX(granted_at) FROM permission AS c WHERE CONCAT(p.grantee_id, p.action_id) = CONCAT(c.grantee_id, c.action_id))
+ORDER BY grantee_id, action_id, since, until DESC;
+;
+SELECT view_permission.* FROM view_permission
 ;
 
 SELECT "Database successfully deployed to the server."

@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.Types;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 public final class PermissionDatasource
@@ -22,10 +23,10 @@ implements Datasource
 	{
 		try
 		{
-			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_permission WHERE id = CONCAT(?, ?) LIMIT 1;");
+			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_permission WHERE CONCAT(grantee_id, action_id) = CONCAT(?, ?) LIMIT 1;");
 			statement.setLong(1, idOfGrantee);
 			statement.setLong(2, idOfAction);
-			DataFactory.getFirstRow(statement.executeQuery( ));
+			return DataFactory.getFirstRow(statement.executeQuery( ));
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to read a permission from the database.", e);
 		}
@@ -37,7 +38,7 @@ implements Datasource
 		{
 			PreparedStatement statement = this.prepareStatement ("SELECT * FROM view_permission WHERE id = ? LIMIT 1;");
 			statement.setLong(1, id);
-			DataFactory.getFirstRow(statement.executeQuery( ));
+			return DataFactory.getFirstRow(statement.executeQuery( ));
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to read a permission from the database.", e);
 		}
@@ -54,29 +55,46 @@ implements Datasource
 		}
 	}
 
-	public void grantPermission (long idOfGranter, long idOfGrantee, long idOfAction)
+	public Data grantPermission (long idOfGranter, long idOfGrantee, long idOfAction)
 	{
 		try
 		{
-			CallableStatement statement = this.prepareCall ("{CALL member_update_permission_grant (?, ?, ?)}");
+			CallableStatement statement = this.prepareCall ("{CALL member_update_permission_grant (?, ?, ?, ?, ?, ?)}");
 			statement.setLong(1, idOfGranter);
 			statement.setLong(2, idOfGrantee);
 			statement.setLong(3, idOfAction);
-			statement.executeQuery( );
+			statement.registerOutParameter(4, Types.INTEGER);
+			statement.registerOutParameter(5, Types.TIMESTAMP);
+			statement.registerOutParameter(6, Types.BOOLEAN);
+			statement.execute( );
+			Long id = statement.getLong(4);
+			Date since = statement.getDate(5);
+			Boolean valid = statement.getBoolean(6);
+			Data data = new Data ( );
+			data.<Long>put("id", Long.class, id);
+			data.<Date>put("since", Date.class, since);
+			data.<Boolean>put("valid", Boolean.class, valid);
+			return data;
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to write to the database a member permission assignation.", e);
 		}
 	}
 
-	public void revokePermission (long idOfGranter, long idOfGrantee, long idOfAction)
+	public Data revokePermission (long idOfRevoker, long idOfPermission)
 	{
 		try
 		{
 			CallableStatement statement = this.prepareCall ("{CALL member_update_permission_revoke (?, ?, ?)}");
-			statement.setLong(1, idOfGranter);
-			statement.setLong(2, idOfGrantee);
-			statement.setLong(3, idOfAction);
-			statement.executeQuery( );
+			statement.setLong(1, idOfRevoker);
+			statement.setLong(2, idOfPermission);
+			statement.registerOutParameter(3, Types.TIMESTAMP);
+			statement.execute( );
+			Date until = statement.getDate(3);
+			Data data = new Data ( );
+			data.<Long>put("id", Long.class, idOfPermission);
+			data.<Date>put("until", Date.class, until);
+			data.<Boolean>put("valid", Boolean.class, false);
+			return data;
 		} catch (SQLException e) {
 			throw new DatasourceException ("Failed to write to the database a member permission unassignation.", e);
 		}

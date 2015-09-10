@@ -1,5 +1,11 @@
 package pl.chelm.pwsz.techsupport.domain;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
+import java.util.HashSet;
+
 import pl.chelm.pwsz.techsupport.database.*;
 import pl.chelm.pwsz.techsupport.services.*;
 
@@ -18,10 +24,10 @@ extends CacheFactory<Comment, CommentDatasource>
 
 	/*public Comment getInstance (Identificator<Comment> id)
 	{
-		Comment comment = Comment.readFromCache(id);
+		Comment comment = this.readFromCache(id);
 		if (comment == null)
 		{
-			Data data = Comment.readFromDatabase(id);
+			Data data = this.readFromDatabase(id);
 			if (data == null)
 			{
 				return null;
@@ -31,7 +37,7 @@ extends CacheFactory<Comment, CommentDatasource>
 			Identificator<Comment> idOfCommentToRespondeTo = new Identificator<Comment> (data.<Long>get(Long.class, "parent_id"));
 			if (idOfCommentToRespondeTo != null)
 			{
-				parent = Comment.getInstance(idOfCommentToRespondeTo);
+				parent = this.getInstance(idOfCommentToRespondeTo);
 			} else {
 				Identificator<Issue> idOfIssueToCommentOn = new Identificator<Issue> (data.<Long>get(Long.class, "issue_id"));
 				issueToCommentOn = Issue.getInstance(idOfIssueToCommentOn);
@@ -46,7 +52,7 @@ extends CacheFactory<Comment, CommentDatasource>
 			} else {
 				comment = new Comment (id, when, parent, author, content);
 			}		
-			Comment.cache(comment);
+			this.cache(comment);
 		}
 		return comment;
 	}*/
@@ -59,8 +65,8 @@ extends CacheFactory<Comment, CommentDatasource>
 
 	public Comment newInstance (Issue issueToCommentOn, Member author, String content)
 	{
-		Data data = Comment.writeToDatabase(issueToCommentOn.getId( ), author.getId( ), content);
-		Comment comment = Comment.getInstance(data);
+		Data data = this.writeToDatabase(issueToCommentOn.getId( ), author.getId( ), content);
+		Comment comment = this.getInstance(data);
 		return comment;
 	}
 
@@ -72,8 +78,8 @@ extends CacheFactory<Comment, CommentDatasource>
 
 	public Comment newInstance (Comment parent, Member author, String content)
 	{
-		Data data = Comment.writeResponseToDatabase(parent.getId( ), author.getId( ), content);
-		Comment comment = Comment.getInstance(data);
+		Data data = this.writeResponseToDatabase(parent.getId( ), author.getId( ), content);
+		Comment comment = this.getInstance(data);
 		return comment;
 	}
 
@@ -86,7 +92,7 @@ extends CacheFactory<Comment, CommentDatasource>
 		Long idValue = data.<Long>get(Long.class, "id");
 		Identificator<Comment> id = new Identificator<Comment> (idValue);
 
-		Comment comment = Comment.readFromCache(id);
+		Comment comment = this.readFromCache(id);
 		if (comment != null)
 		{
 			return comment;
@@ -115,12 +121,12 @@ extends CacheFactory<Comment, CommentDatasource>
 		if (parentIdValue != null && parentIdValue > 0)
 		{
 			Identificator<Comment> parentId = new Identificator<Comment> (parentIdValue);
-			parent = Comment.getInstance(parentId);
+			parent = this.getInstance(parentId);
 		}
 		if (parent != null)
 		{
 			comment = new Comment (id, when, parent, author, content);
-			Comment.cache(comment);
+			this.cache(comment);
 		} else {
 			Long issueIdValue = data.<Long>get(Long.class, "issue_id");
 			Identificator<Issue> issueId = new Identificator<Issue> (issueIdValue);
@@ -130,12 +136,12 @@ extends CacheFactory<Comment, CommentDatasource>
 				throw new RuntimeException ("Issue is missing.");
 			}
 			comment = new Comment (id, when, issue, author, content);
-			Comment.cache(comment);
+			this.cache(comment);
 		}
 		return comment;
 	}
 
-	public Set<Comment> getInstance (Issue issue)
+	public Set<Comment> getInstances (Issue issue)
 	{
 		CommentDatasource datasource = this.getDefaultDatasource( );
 		Collection<Data> collectionOfData = datasource.readIssue(issue.getId( ).longValue( ));
@@ -146,7 +152,7 @@ extends CacheFactory<Comment, CommentDatasource>
 		Set<Comment> setOfComments = new HashSet<Comment> ( );
 		for (Data data : collectionOfData)
 		{
-			Comment comment = Comment.getInstance(data);
+			Comment comment = this.getInstance(data);
 			setOfComments.add(comment);
 		}
 		return Collections.<Comment>unmodifiableSet(setOfComments);

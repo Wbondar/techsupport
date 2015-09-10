@@ -7,6 +7,30 @@ public final class Action
 extends Object
 implements Identifiable<Action>
 {
+	public static Action newInstance (String label)
+	{
+		ActionFactory factory = Factories.<ActionFactory>getInstance(ActionFactory.class);
+		return factory.newInstance(label);
+	}
+
+	public static Action getInstance (String label)
+	{
+		ActionFactory factory = Factories.<ActionFactory>getInstance(ActionFactory.class);
+		return factory.getInstance(label);
+	}
+
+	public static Action getInstance (Identificator<Action> id)
+	{
+		ActionFactory factory = Factories.<ActionFactory>getInstance(ActionFactory.class);
+		return factory.getInstance(id);
+	}
+
+	static Action getInstance (Data data)
+	{
+		ActionFactory factory = Factories.<ActionFactory>getInstance(ActionFactory.class);
+		return factory.getInstance(data);
+	}
+
 	Action (long id, String label)
 	{
 		this(new Identificator<Action> (id), label);
@@ -30,7 +54,7 @@ implements Identifiable<Action>
 		Permission permission = Permission.getInstance(member, this);
 		if (permission == null)
 		{
-			throw new RuntimeException ("Failed to instantiate permission object.");
+			return false;
 		}
 		return permission.isValid( );
 	}
@@ -40,7 +64,7 @@ implements Identifiable<Action>
 		return Permission.newInstance(grantor, grantee, this);
 	}
 
-	public RevokedPermisson revokeFrom (Member revoker, Member memberForActionToBeRevokedFrom)
+	public RevokedPermission revokeFrom (Member revoker, Member memberForActionToBeRevokedFrom)
 	{
 		return RevokedPermission.newInstance(revoker, memberForActionToBeRevokedFrom, this);
 	}

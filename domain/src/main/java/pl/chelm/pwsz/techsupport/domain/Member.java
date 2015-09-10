@@ -9,6 +9,30 @@ public final class Member
 extends Object
 implements Identifiable<Member>
 {
+	public static Member getInstance (String username, String password)
+	{
+		MemberFactory factory = Factories.<MemberFactory>getInstance(MemberFactory.class);
+		return factory.getInstance(username, password);
+	}
+
+	public static Member getInstance (String username)
+	{
+		MemberFactory factory = Factories.<MemberFactory>getInstance(MemberFactory.class);
+		return factory.getInstance(username);
+	}
+
+	public static Member getInstance (Identificator<Member> id)
+	{
+		MemberFactory factory = Factories.<MemberFactory>getInstance(MemberFactory.class);
+		return factory.getInstance(id);
+	}
+
+	public static Member newInstance (String username, String password)
+	{
+		MemberFactory factory = Factories.<MemberFactory>getInstance(MemberFactory.class);
+		return factory.newInstance(username, password);
+	}
+
 	private final String name;
 
 	Member (long id, String name)
@@ -29,12 +53,12 @@ implements Identifiable<Member>
 
 	public Set<Issue> getIssues ( )
 	{
-		return Issue.getInstance(this);
+		return Issue.getInstances(this);
 	}
 
-	public boolean isPermitted (Action givenAction)
+	public boolean isPermited (Action givenAction)
 	{
-		return givenAction.isPermittedFor(this);
+		return givenAction.isPermitedFor(this);
 	}
 
 	public Permission permitAction (Member granter, Action actionToBePermited)

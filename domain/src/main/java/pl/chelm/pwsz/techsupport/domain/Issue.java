@@ -12,6 +12,30 @@ public final class Issue
 extends Object
 implements Identifiable<Issue>
 {
+	public static Issue getInstance (Identificator<Issue> id)
+	{
+		IssueFactory factory = Factories.<IssueFactory>getInstance(IssueFactory.class);
+		return factory.getInstance(id);
+	}
+
+	static Issue getInstance (Data data)
+	{
+		IssueFactory factory = Factories.<IssueFactory>getInstance(IssueFactory.class);
+		return factory.getInstance(data);
+	}
+
+	public static Set<Issue> getInstances (Member issuer)
+	{
+		IssueFactory factory = Factories.<IssueFactory>getInstance(IssueFactory.class);
+		return factory.getInstances(issuer);
+	}
+
+	public static Issue newInstance (Member issuer, String title, String message)
+	{
+		IssueFactory factory = Factories.<IssueFactory>getInstance(IssueFactory.class);
+		return factory.newInstance(issuer, title, message);
+	}
+
 	private final Member issuer;
 	private final String title;
 	private final String message;
@@ -75,7 +99,7 @@ implements Identifiable<Issue>
 
 	public Set<Comment> getComments ( )
 	{
-		return Comment.getInstance(this);
+		return Comment.getInstances(this);
 	}
 
 	private final Identificator<Issue> id;

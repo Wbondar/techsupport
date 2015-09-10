@@ -20,7 +20,7 @@ extends Object
 				factory = constructor.newInstance( );
 				Factories.mapping.<T>put(typeOfAFactory, factory);
 			} catch (Exception e) {
-				throw new FactoryException ("Failed to get factory.", e);
+				throw new RuntimeException ("Failed to get factory.", e);
 			}
 		}
 		return factory;

@@ -1,5 +1,10 @@
 package pl.chelm.pwsz.techsupport.domain;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.HashSet;
+
 import pl.chelm.pwsz.techsupport.database.*;
 import pl.chelm.pwsz.techsupport.services.*;
 
@@ -57,7 +62,7 @@ extends CacheFactory<Issue, IssueDatasource>
 		return issue;
 	}
 
-	public Set<Issue> getInstance (Member issuer)
+	public Set<Issue> getInstances (Member issuer)
 	{
 		Collection<Data> collectionOfData = this.readFromDatabaseByIssuer (issuer.getId( ));
 		if (collectionOfData == null)

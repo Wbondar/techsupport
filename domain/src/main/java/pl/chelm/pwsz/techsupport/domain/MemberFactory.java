@@ -40,7 +40,7 @@ extends CacheFactory<Member, MemberDatasource>
 		return member;
 	}
 
-	private Member getInstance (Data data)
+	Member getInstance (Data data)
 	{
 		Identificator<Member> id = new Identificator<Member> (data.<Long>get(Long.class, "id"));
 		Member member = this.readFromCache(id);

@@ -2,11 +2,26 @@ package pl.chelm.pwsz.techsupport.domain;
 
 import java.util.Date;
 
+import pl.chelm.pwsz.techsupport.services.Identifiable;
+import pl.chelm.pwsz.techsupport.services.Identificator;
+
 class Permission
 extends Object
 implements Identifiable<Permission>
 {
-	Permission (Identificator<Permission> id, Member grantor, Member grantee, Permission permitedAction, Date dateGranted, boolean valid)
+	public static Permission newInstance (Member grantor, Member grantee, Action permitedAction)
+	{
+		PermissionFactory factory = Factories.<PermissionFactory>getInstance(PermissionFactory.class);
+		return factory.newInstance(grantor, grantee, permitedAction);
+	}
+
+	public static Permission getInstance (Member supposedGrantee, Action supposedPermitedAction)
+	{
+		PermissionFactory factory = Factories.<PermissionFactory>getInstance(PermissionFactory.class);
+		return factory.getInstance(supposedGrantee, supposedPermitedAction);
+	}
+
+	Permission (Identificator<Permission> id, Member grantor, Member grantee, Action permitedAction, Date dateGranted, boolean valid)
 	{
 		this.id              = id;
 		this.grantor         = grantor;

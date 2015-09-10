@@ -13,6 +13,24 @@ public final class Comment
 extends Object
 implements Identifiable<Comment>
 {
+	public static Comment newInstance (Comment commentToResponseTo, Member responder, String message)
+	{
+		CommentFactory factory = Factories.<CommentFactory>getInstance(CommentFactory.class);
+		return factory.newInstance(commentToResponseTo, responder, message);
+	}
+
+	public static Comment newInstance (Issue issueToPostCommentTo, Member author, String message)
+	{
+		CommentFactory factory = Factories.<CommentFactory>getInstance(CommentFactory.class);
+		return factory.newInstance(issueToPostCommentTo, author, message);
+	}
+
+	public static Set<Comment> getInstances (Issue issue)
+	{
+		CommentFactory factory = Factories.<CommentFactory>getInstance(CommentFactory.class);
+		return factory.getInstances(issue);
+	}
+
 	Comment 
 	(
 		  Identificator<Comment> id
