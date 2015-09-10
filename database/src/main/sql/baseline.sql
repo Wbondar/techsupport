@@ -435,8 +435,6 @@ SELECT *
 FROM action
 ;
 
-DROP VIEW view_permission
-;
 CREATE VIEW view_permission AS 
 SELECT 
       p.id AS id 
@@ -451,8 +449,6 @@ FROM permission AS p
 LEFT JOIN permission_revocation AS r ON p.id = r.permission_id 
 WHERE granted_at >= (SELECT MAX(granted_at) FROM permission AS c WHERE CONCAT(p.grantee_id, p.action_id) = CONCAT(c.grantee_id, c.action_id))
 ORDER BY grantee_id, action_id, since, until DESC;
-;
-SELECT view_permission.* FROM view_permission
 ;
 
 SELECT "Database successfully deployed to the server."
