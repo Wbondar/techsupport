@@ -44,17 +44,6 @@ implements Datasource
 		}
 	}
 
-
-	public void update (long idOfGranter, long idOfGrantee, long idOfAction, boolean isValid)
-	{
-		if (isValid)
-		{
-			this.grantPermission(idOfGranter, idOfGrantee, idOfAction);
-		} else {
-			this.revokePermission(idOfGranter, idOfGrantee, idOfAction);
-		}
-	}
-
 	public Data grantPermission (long idOfGranter, long idOfGrantee, long idOfAction)
 	{
 		try

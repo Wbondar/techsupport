@@ -2,6 +2,8 @@ package pl.chelm.pwsz.techsupport.web;
 
 import java.io.IOException;
 
+import java.util.ResourceBundle;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
@@ -28,16 +30,21 @@ extends HttpServlet
 		Member member = Member.getInstance(username, password);
 		if (member != null)
 		{
-			HttpSession session = request.getSession(false);
-			if (session != null)
+			if (member.isPermited(Action.getInstance("LOG_IN")))
 			{
-				session.invalidate( );
+				HttpSession session = request.getSession(false);
+				if (session != null)
+				{
+					session.invalidate( );
+				}
+				session = request.getSession( );
+				session.setMaxInactiveInterval(60*10);
+				session.setAttribute(Member.class.toString( ), member);
+				response.setStatus(HttpServletResponse.SC_OK);
+				Page.HOME.redirect(request, response);
+			} else {
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, ResourceBundle.getBundle("ErrorMessages", response.getLocale( )).getString("BANNED"));	
 			}
-			session = request.getSession( );
-			session.setMaxInactiveInterval(60*10);
-			session.setAttribute(Member.class.toString( ), member);
-			response.setStatus(HttpServletResponse.SC_OK);
-			Page.HOME.redirect(request, response);
 		} else {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Wrong username or password.");
 		}

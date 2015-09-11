@@ -18,16 +18,16 @@ extends CacheFactory<Permission, PermissionDatasource>
 		this(Permission.class, PermissionDatasource.class);
 	}
 
-	private Data writePermissionGrantingToDatabase (Identificator<Member> idOfAssigner, Identificator<Member> idOfAssignee, Identificator<Action> idOfAction)
+	private Data writePermissionGrantingToDatabase (Identificator<Member> idOfGranter, Identificator<Member> idOfGrantee, Identificator<Action> idOfAction)
 	{
 		PermissionDatasource datasource = this.getDefaultDatasource( );
-		return datasource.grantPermission(idOfAssigner.longValue( ), idOfAssignee.longValue( ), idOfAction.longValue( ));
+		return datasource.grantPermission(idOfGranter.longValue( ), idOfGrantee.longValue( ), idOfAction.longValue( ));
 	}
 
-	private Data writePermissionRevokingToDatabase (Identificator<Member> idOfAssigner, Identificator<Member> idOfAssignee, Identificator<Action> idOfAction)
+	private Data writePermissionRevokingToDatabase (Identificator<Member> idOfGranter, Identificator<Permission> idOfPermissionToBeRevoked)
 	{
 		PermissionDatasource datasource = this.getDefaultDatasource( );
-		return datasource.revokePermission(idOfAssigner.longValue( ), idOfAssignee.longValue( ), idOfAction.longValue( ));
+		return datasource.revokePermission(idOfGranter.longValue( ), idOfPermissionToBeRevoked.longValue( ));
 	}
 
 	public Permission newInstance (Member grantor, Member grantee, Action actionToGrant)
@@ -52,7 +52,7 @@ extends CacheFactory<Permission, PermissionDatasource>
 		Long idValue = data.<Long>get(Long.class, "id");
 		Identificator<Permission> id = new Identificator<Permission> (idValue);
 		Date since = data.<Date>get(Date.class, "since");
-		Boolean valid = data.<Boolean>get(Boolean.class, "valid");
+		Boolean valid = Boolean.valueOf(data.<String>get(String.class, "valid"));
 		return new Permission (id, grantor, grantee, actionToGrant, since, valid);
 	}
 
@@ -79,7 +79,7 @@ extends CacheFactory<Permission, PermissionDatasource>
 				return new RevokedPermission (revoker, permissionToRevoke, new Date ( ));
 			}
 		}
-		Data data =  this.writePermissionRevokingToDatabase(revoker.getId( ), permissionToRevoke.getGrantee( ).getId( ), permissionToRevoke.getAction( ).getId( ));
+		Data data =  this.writePermissionRevokingToDatabase(revoker.getId( ), permissionToRevoke.getId( ));
 		if (data == null)
 		{
 			return null;
@@ -99,12 +99,12 @@ extends CacheFactory<Permission, PermissionDatasource>
 		Identificator<Permission> id = new Identificator<Permission> (data.<Long>get(Long.class, "id"));
 		Identificator<Action> idOfAction = new Identificator<Action> (data.<Long>get(Long.class, "action_id"));
 		Action action = Action.getInstance(idOfAction);
-		Identificator<Member> idOfGranter = new Identificator<Member> (data.<Long>get(Long.class, "granter_id"));
+		Identificator<Member> idOfGranter = new Identificator<Member> (data.<Long>get(Long.class, "grantor_id"));
 		Member granter = Member.getInstance(idOfGranter);
 		Identificator<Member> idOfGrantee = new Identificator<Member> (data.<Long>get(Long.class, "grantee_id"));
 		Member grantee = Member.getInstance(idOfGrantee);
 		Date since = data.<Date>get(Date.class, "since");
-		Boolean valid = data.<Boolean>get(Boolean.class, "valid");
+		Boolean valid = Boolean.valueOf(data.<String>get(String.class, "valid"));
 		Permission permission = new Permission (id, granter, grantee, action, since, valid);
 		if (!valid)
 		{

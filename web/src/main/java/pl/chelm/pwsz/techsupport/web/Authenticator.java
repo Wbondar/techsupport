@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import pl.chelm.pwsz.techsupport.domain.Action;
 import pl.chelm.pwsz.techsupport.domain.Member;
 
 public final class Authenticator
@@ -40,7 +41,13 @@ implements Filter
 		}
 		if (user != null)
 		{
-			chain.doFilter(request, response);
+			if (user.isPermited(Action.getInstance("LOG_IN")))
+			{
+				chain.doFilter(request, response);
+			} else {
+				HttpServletResponse httpResponse = (HttpServletResponse)response;
+				httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, ResourceBundle.getBundle("ErrorMessages", response.getLocale( )).getString("BANNED"));	
+			}
 		} else {
 			HttpServletResponse httpResponse = (HttpServletResponse)response;
 			httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, ResourceBundle.getBundle("ErrorMessages", response.getLocale( )).getString("LOG_IN_REQUIRED"));

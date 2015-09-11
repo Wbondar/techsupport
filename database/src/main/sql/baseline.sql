@@ -444,7 +444,7 @@ SELECT
     , p.granted_at AS since
     , r.revoked_at AS until
     , r.revoker_id 
-    , r.revoker_id IS NULL AS valid
+    , IF(r.revoker_id IS NULL, 'TRUE', 'FALSE') AS valid
 FROM permission AS p 
 LEFT JOIN permission_revocation AS r ON p.id = r.permission_id 
 WHERE granted_at >= (SELECT MAX(granted_at) FROM permission AS c WHERE CONCAT(p.grantee_id, p.action_id) = CONCAT(c.grantee_id, c.action_id))
